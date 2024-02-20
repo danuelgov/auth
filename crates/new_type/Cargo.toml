@@ -1,0 +1,29 @@
+[package]
+name = "new_type"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+base58 = { package = "bs58", version = "0.5.0", optional = true }
+chrono = { version = "0.4.33", features = ["now", "serde"], optional = true }
+dep_email_address = { package = "email_address", version = "0.2.4", optional = true }
+rand = { version = "0.8.5", optional = true }
+rust-argon2 = { version = "2.1.0", optional = true }
+serde = { version = "1.0.196", features = ["derive"] }
+sqlx = { version = "0.7", features = [
+  "runtime-tokio",
+  "tls-rustls",
+  "mysql",
+  "macros",
+  "chrono",
+] }
+tokio = { version = "1.36.0", features = ["rt"], optional = true }
+
+[features]
+default = ["email_address", "ip_addr", "time", "password", "hash", "handle"]
+email_address = ["dep:dep_email_address"]
+ip_addr = []
+time = ["dep:chrono"]
+password = ["hash", "dep:rand"]
+hash = ["dep:rust-argon2", "dep:rand", "dep:tokio"]
+handle = ["hash", "dep:base58", "dep:rand"]

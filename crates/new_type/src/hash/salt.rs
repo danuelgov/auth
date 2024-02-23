@@ -1,5 +1,6 @@
 use rand::Rng;
 
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Salt(u128);
 
 impl std::fmt::Display for Salt {

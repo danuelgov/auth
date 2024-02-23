@@ -1,7 +1,7 @@
 use crate::{IpAddrV4, IpAddrV6};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct IpAddr(std::net::IpAddr);
 
 impl std::fmt::Display for IpAddr {

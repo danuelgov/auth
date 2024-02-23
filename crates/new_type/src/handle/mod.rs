@@ -77,6 +77,7 @@ impl Handle {
         let handle = base58::encode(handle)
             .with_alphabet(base58::Alphabet::FLICKR)
             .into_string();
+        let handle = handle[..20].to_owned();
 
         Self(handle)
     }

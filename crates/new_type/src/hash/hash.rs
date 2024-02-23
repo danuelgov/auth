@@ -1,4 +1,4 @@
-#[derive(PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Hash(String);
 
 impl std::fmt::Display for Hash {

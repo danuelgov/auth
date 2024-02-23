@@ -1,0 +1,11 @@
+[table]
+name = "user_agreement"
+
+[columns.user_pk]
+type = "PrimaryKey"
+
+[columns.agreement_pk]
+type = "PrimaryKey"
+
+[columns.expired_at]
+type = "DateTime"

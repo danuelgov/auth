@@ -1,0 +1,19 @@
+[package]
+name = "auth_database"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = { version = "0.4.33", features = ["now", "serde"] }
+database_toolkit = { path = "../database_toolkit" }
+identity = { path = "../identity" }
+new_type = { path = "../new_type" }
+serde = { version = "1.0.196", features = ["derive"] }
+
+[dev-dependencies]
+insta = "1.34.0"
+
+[build-dependencies]
+toml = "0.8.10"
+serde = { version = "1.0.196", features = ["derive"] }
+convert_case = "0.6.0"

@@ -1,0 +1,17 @@
+[table]
+name = "hasher"
+columns = ["hasher_pk", "name"]
+
+[columns.hasher_pk]
+type = "PrimaryKey"
+
+[columns.name]
+type = "String"
+min_length = 1
+max_length = 64
+
+[knowns.argon2]
+primary_key = "0x018d938bdf7e761199bcf12458f48155"
+
+[knowns.bcrypt]
+primary_key = "0x018d938bdf7e761199bcf12458f48156"

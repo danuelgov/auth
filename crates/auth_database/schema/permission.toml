@@ -1,0 +1,14 @@
+[table]
+name = "permission"
+
+[columns.permission_pk]
+type = "PrimaryKey"
+
+[columns.id]
+type = "Identity"
+prefix = "permission_"
+
+[columns.name]
+type = "String"
+min_length = 1
+max_length = 64

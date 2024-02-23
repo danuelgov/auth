@@ -1,0 +1,18 @@
+[table]
+name = "user_session"
+
+[columns.user_session_pk]
+type = "PrimaryKey"
+
+[columns.id]
+type = "Identity"
+prefix = "user_session_"
+
+[columns.user_pk]
+type = "PrimaryKey"
+
+[columns.ip_address]
+type = "IpAddr"
+
+[columns.expired_at]
+type = "DateTime"

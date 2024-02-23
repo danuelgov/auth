@@ -1,0 +1,25 @@
+[table]
+name = "agreement"
+
+[columns.agreement_pk]
+type = "PrimaryKey"
+
+[columns.id]
+type = "Identity"
+prefix = "agreement_"
+
+[columns.policy_pk]
+type = "PrimaryKey"
+
+[columns.name]
+type = "String"
+min_length = 1
+max_length = 64
+
+[knowns.primary_policy]
+primary_key = "0x018d9bd868347d8e9e279e77f5a4fdfb"
+identity = "0x018d9bd868347bda8b6e2f979a47d57b"
+
+[knowns.terms_of_service]
+primary_key = "0x9aacb6a19f1940d2985401c33876fee5"
+identity = "0xa866525497a54a9bab7d1bcd98ad7d59"

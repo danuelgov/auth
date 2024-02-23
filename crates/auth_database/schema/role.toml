@@ -1,0 +1,14 @@
+[table]
+name = "role"
+
+[columns.role_pk]
+type = "PrimaryKey"
+
+[columns.id]
+type = "Identity"
+prefix = "role_"
+
+[columns.name]
+type = "String"
+min_length = 1
+max_length = 64

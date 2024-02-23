@@ -1,0 +1,19 @@
+[table]
+name = "user_profile"
+
+[columns.user_pk]
+type = "PrimaryKey"
+
+[columns.handle]
+type = "Handle"
+
+[columns.name]
+type = "String"
+min_length = 1
+max_length = 64
+
+[columns.bio]
+type = "String"
+
+[columns.image]
+type = "String"

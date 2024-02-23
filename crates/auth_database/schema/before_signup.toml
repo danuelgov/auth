@@ -1,0 +1,18 @@
+[table]
+name = "before_signup"
+
+[columns.before_signup_pk]
+type = "PrimaryKey"
+
+[columns.id]
+type = "Identity"
+prefix = "before_signup_"
+
+[columns.payload]
+type = "Json"
+
+[columns.expired_at]
+type = "DateTime"
+
+[columns.completed_at]
+type = "DateTime"

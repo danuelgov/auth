@@ -1,0 +1,14 @@
+[table]
+name = "user_group"
+
+[columns.user_group_pk]
+type = "PrimaryKey"
+
+[columns.id]
+type = "Identity"
+prefix = "user_group_"
+
+[columns.name]
+type = "String"
+min_length = 1
+max_length = 64

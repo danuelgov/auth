@@ -1,0 +1,12 @@
+[table]
+name = "user"
+
+[columns.user_pk]
+type = "PrimaryKey"
+
+[columns.id]
+type = "Identity"
+prefix = "user_"
+
+[columns.deactivated_at]
+type = "DateTime"

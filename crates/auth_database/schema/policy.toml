@@ -1,0 +1,10 @@
+[table]
+name = "policy"
+
+[columns.policy_pk]
+type = "PrimaryKey"
+
+[columns.name]
+type = "String"
+min_length = 1
+max_length = 64

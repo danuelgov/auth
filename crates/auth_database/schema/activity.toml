@@ -1,0 +1,14 @@
+[table]
+name = "activity"
+
+[columns.activity_pk]
+type = "PrimaryKey"
+
+[columns.id]
+type = "Identity"
+prefix = "activity_"
+
+[columns.name]
+type = "String"
+min_length = 1
+max_length = 64

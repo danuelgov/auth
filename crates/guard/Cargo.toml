@@ -1,0 +1,8 @@
+[package]
+name = "guard"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rocket = "0.5.0"
+auth_database = { path = "../auth_database" }

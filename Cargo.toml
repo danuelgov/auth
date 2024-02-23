@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = [
+  "crates/auth_admin_server",
+  "crates/auth_api_server",
+  "crates/auth_authn_server",
+  "crates/auth_console_server",
+  "crates/auth_database",
+  "crates/database_toolkit",
+  "crates/guard",
+  "crates/identity",
+  "crates/new_type",
+]

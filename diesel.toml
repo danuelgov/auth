@@ -1,0 +1,6 @@
+[print_schema]
+file = "crates/auth_database/src/schema.rs"
+custom_type_derives = ["diesel::query_builder::QueryId"]
+
+[migrations_directory]
+dir = "crates/auth_database/migrations"

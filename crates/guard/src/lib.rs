@@ -1,5 +1,8 @@
 #![allow(unused)]
 
+#[macro_use]
+extern crate rocket;
+
 mod data_guard;
 mod fairing;
 mod request_guard;

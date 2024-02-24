@@ -2,16 +2,17 @@ mod repository;
 mod request;
 mod service;
 
+use self::find_before_signup::FindBeforeSignupError;
 use database_toolkit::DatabaseConnectionPool;
+use guard::IpAddrRateLimit;
 use repository::*;
 use request::*;
 use rocket::{http::Status, serde::json::Json, State};
 use service::*;
 
-use self::find_before_signup::FindBeforeSignupError;
-
 #[post("/signup/accept", data = "<body>")]
 pub async fn handler(
+    _rate_limit: IpAddrRateLimit,
     pool: &State<DatabaseConnectionPool>,
     body: Json<Data>,
 ) -> Result<Status, Status> {

@@ -3,6 +3,7 @@ mod request;
 mod service;
 
 use database_toolkit::DatabaseConnectionPool;
+use guard::IpAddrRateLimit;
 use repository::*;
 use request::*;
 use rocket::{http::Status, serde::json::Json, State};
@@ -10,6 +11,7 @@ use service::*;
 
 #[post("/signup", data = "<body>")]
 pub async fn handler(
+    _rate_limit: IpAddrRateLimit,
     pool: &State<DatabaseConnectionPool>,
     body: Json<Data>,
 ) -> Result<Status, Status> {

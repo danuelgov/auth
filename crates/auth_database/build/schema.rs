@@ -129,13 +129,6 @@ impl std::fmt::Display for KnownName {
     }
 }
 
-impl KnownName {
-    #[inline]
-    pub fn to_case(&self, case: Case) -> String {
-        self.0.to_case(case)
-    }
-}
-
 impl<'de> Deserialize<'de> for Key {
     fn deserialize<D>(deserializer: D) -> Result<Key, D::Error>
     where

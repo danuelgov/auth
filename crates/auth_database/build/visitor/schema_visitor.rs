@@ -1,4 +1,4 @@
-use crate::{ColumnsVisitor, KeyVisitor, KnownKindVisitor, Schema, TableNameVisitor, Visitor};
+use crate::{ColumnsVisitor, KnownKindVisitor, Schema, TableVisitor, Visitor};
 use std::io::Write;
 
 pub struct SchemaVisitor<'build> {
@@ -16,9 +16,8 @@ impl<'build> Visitor for SchemaVisitor<'build> {
     fn visit_schema(&mut self, schema: &Schema) -> Result<(), std::io::Error> {
         writeln!(self.file)?;
         writeln!(self.file, "pub mod {} {{", schema.table.name)?;
-        TableNameVisitor::new(self.file).visit_schema(schema)?;
+        TableVisitor::new(self.file, schema.table.name.to_owned()).visit_schema(schema)?;
         ColumnsVisitor::new(self.file).visit_schema(schema)?;
-        KeyVisitor::new(self.file, schema.table.name.to_owned()).visit_schema(schema)?;
         KnownKindVisitor::new(self.file).visit_schema(&schema)?;
         writeln!(self.file, "}}")?;
 

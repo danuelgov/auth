@@ -1,8 +1,8 @@
-use crate::{visit_schema, Column, ColumnName, Schema, Visitor};
+use crate::{Column, ColumnName, Visitor};
 use std::io::Write;
 
 pub struct ColumnNameVisitor<'build> {
-     file: &'build mut std::fs::File,
+    file: &'build mut std::fs::File,
 }
 
 impl<'build> ColumnNameVisitor<'build> {
@@ -13,13 +13,6 @@ impl<'build> ColumnNameVisitor<'build> {
 }
 
 impl<'build> Visitor for ColumnNameVisitor<'build> {
-    fn visit_schema(&mut self, schema: &Schema) -> Result<(), std::io::Error> {
-        writeln!(self.file)?;
-        visit_schema(self, schema)?;
-
-        Ok(())
-    }
-
     fn visit_column(
         &mut self,
         column_name: &ColumnName,
@@ -27,7 +20,7 @@ impl<'build> Visitor for ColumnNameVisitor<'build> {
     ) -> Result<(), std::io::Error> {
         writeln!(
             self.file,
-            "        pub const {}: Column = Column(\"{}\");",
+            "        pub const {}: super::Column = super::Column::new(\"{}\");",
             column_name.to_ascii_uppercase(),
             column_name,
         )?;

@@ -1,15 +1,17 @@
-use crate::{visit_schema, ColumnName, IdentityType, Schema, TableName, Visitor};
+use crate::{
+    visit_schema, AllColumnNameVisitor, ColumnName, IdentityType, Schema, TableName, Visitor,
+};
 use convert_case::Case;
 use std::io::Write;
 
-pub struct KeyVisitor<'build> {
+pub struct TableVisitor<'build> {
     file: &'build mut std::fs::File,
     table_name: TableName,
     visited_primary_key: bool,
     visited_identity: bool,
 }
 
-impl<'build> KeyVisitor<'build> {
+impl<'build> TableVisitor<'build> {
     #[inline]
     pub fn new(file: &'build mut std::fs::File, table_name: TableName) -> Self {
         Self {
@@ -21,8 +23,9 @@ impl<'build> KeyVisitor<'build> {
     }
 }
 
-impl<'build> Visitor for KeyVisitor<'build> {
+impl<'build> Visitor for TableVisitor<'build> {
     fn visit_schema(&mut self, schema: &Schema) -> Result<(), std::io::Error> {
+        writeln!(self.file, "    use database_toolkit::Table;")?;
         writeln!(self.file)?;
         writeln!(
             self.file,
@@ -33,7 +36,20 @@ impl<'build> Visitor for KeyVisitor<'build> {
             "    pub struct {};",
             self.table_name.to_case(Case::Pascal)
         )?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "    impl Table for {} {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(
+            self.file,
+            "        const NAME: &'static str = \"{}\";",
+            self.table_name
+        )?;
+        writeln!(self.file, "    }}")?;
         visit_schema(self, schema)?;
+        AllColumnNameVisitor::new(self.file).visit_schema(schema)?;
 
         Ok(())
     }

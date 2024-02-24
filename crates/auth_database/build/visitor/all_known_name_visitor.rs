@@ -1,5 +1,4 @@
 use crate::{visit_knowns, Known, KnownName, Visitor};
-use convert_case::{Case, Casing};
 use std::io::Write;
 
 pub struct AllKnownNameVisitor<'build> {

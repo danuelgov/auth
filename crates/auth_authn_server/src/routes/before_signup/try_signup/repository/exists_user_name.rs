@@ -1,4 +1,4 @@
-use auth_database::user_profile::{self, columns::UserProfileName};
+use auth_database::user_profile::{self, columns::UserProfileName, UserProfile};
 use database_toolkit::{DatabaseConnection, QueryBuilder};
 use sqlx::FromRow;
 
@@ -43,10 +43,9 @@ fn query<'q>(user_name: UserProfileName) -> QueryBuilder<'q> {
     let user_name = user_name.as_str().to_owned();
 
     QueryBuilder::new()
-        .select()
-        .write("COUNT(*)")
-        .alias("count")
-        .from(user_profile::TABLE_NAME)
+        .select(UserProfile, |builder| {
+            builder.write("COUNT(*)").alias("count")
+        })
         .where_(|builder| {
             builder.condition(|builder| {
                 builder

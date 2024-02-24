@@ -3,6 +3,7 @@ use auth_database::{
     before_signup::{
         self,
         columns::{BeforeSignupIdentity, BeforeSignupPrimaryKey},
+        BeforeSignup,
     },
     user_profile::columns::UserProfileName,
 };
@@ -85,7 +86,7 @@ fn query<'q>(
 
     QueryBuilder::new()
         .insert_into(
-            before_signup::TABLE_NAME,
+            BeforeSignup,
             &[
                 before_signup::columns::BEFORE_SIGNUP_PK,
                 before_signup::columns::ID,

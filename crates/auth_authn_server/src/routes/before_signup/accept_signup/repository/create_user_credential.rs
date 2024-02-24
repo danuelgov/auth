@@ -1,7 +1,7 @@
 use auth_database::{
     credential::columns::CredentialPrimaryKey,
     user::columns::UserPrimaryKey,
-    user_credential::{self, columns::UserCredentialPrimaryKey},
+    user_credential::{self, columns::UserCredentialPrimaryKey, UserCredential},
 };
 use database_toolkit::{QueryBuilder, Transaction};
 use new_type::EmailAddress;
@@ -46,7 +46,7 @@ fn query<'args>(
 ) -> QueryBuilder<'args> {
     QueryBuilder::new()
         .insert_into(
-            user_credential::TABLE_NAME,
+            UserCredential,
             &[
                 user_credential::columns::USER_CREDENTIAL_PK,
                 user_credential::columns::USER_PK,

@@ -1,4 +1,4 @@
-use auth_database::before_signup::{self, columns::BeforeSignupPrimaryKey};
+use auth_database::before_signup::{self, columns::BeforeSignupPrimaryKey, BeforeSignup};
 use database_toolkit::{QueryBuilder, Transaction};
 
 pub trait CompleteBeforeSignupContract {
@@ -35,9 +35,8 @@ fn query<'q>(before_signup_pk: BeforeSignupPrimaryKey) -> QueryBuilder<'q> {
     let before_signup_pk: Vec<u8> = before_signup_pk.into();
 
     QueryBuilder::new()
-        .update(before_signup::TABLE_NAME)
-        .set()
-        .assign_value(before_signup::columns::COMPLETED_AT, now)
+        .update(BeforeSignup)
+        .set(before_signup::columns::COMPLETED_AT, now)
         .where_(|builder| {
             builder.condition(|builder| {
                 builder

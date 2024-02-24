@@ -1,6 +1,7 @@
 use auth_database::{
-    hasher::columns::HasherPrimaryKey, user_credential::columns::UserCredentialPrimaryKey,
-    user_credential__has__hasher,
+    hasher::columns::HasherPrimaryKey,
+    user_credential::columns::UserCredentialPrimaryKey,
+    user_credential__has__hasher::{self, UserCredentialHasHasher},
 };
 use database_toolkit::{QueryBuilder, Transaction};
 use new_type::{Password, Salt};
@@ -48,7 +49,7 @@ fn query<'args>(
 ) -> QueryBuilder<'args> {
     QueryBuilder::new()
         .insert_into(
-            user_credential__has__hasher::TABLE_NAME,
+            UserCredentialHasHasher,
             &[
                 user_credential__has__hasher::columns::USER_CREDENTIAL_PK,
                 user_credential__has__hasher::columns::HASHER_PK,

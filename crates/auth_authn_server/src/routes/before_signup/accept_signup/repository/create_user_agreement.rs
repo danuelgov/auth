@@ -1,5 +1,7 @@
 use auth_database::{
-    agreement::columns::AgreementPrimaryKey, user::columns::UserPrimaryKey, user_agreement,
+    agreement::columns::AgreementPrimaryKey,
+    user::columns::UserPrimaryKey,
+    user_agreement::{self, UserAgreement},
 };
 use database_toolkit::{QueryBuilder, Transaction};
 
@@ -46,7 +48,7 @@ fn query<'args>(
     };
     let builder = QueryBuilder::new()
         .insert_into(
-            user_agreement::TABLE_NAME,
+            UserAgreement,
             &[
                 user_agreement::columns::USER_PK,
                 user_agreement::columns::AGREEMENT_PK,

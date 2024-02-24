@@ -1,6 +1,7 @@
 use auth_database::user::{
     self,
     columns::{UserIdentity, UserPrimaryKey},
+    User,
 };
 use database_toolkit::{QueryBuilder, Transaction};
 
@@ -37,10 +38,7 @@ impl CreateUserContract for super::Repository {
 
 fn query<'args>(user_pk: UserPrimaryKey, user_id: UserIdentity) -> QueryBuilder<'args> {
     QueryBuilder::new()
-        .insert_into(
-            user::TABLE_NAME,
-            &[user::columns::USER_PK, user::columns::ID],
-        )
+        .insert_into(User, &[user::columns::USER_PK, user::columns::ID])
         .values(|builder| {
             builder.nested(|builder| {
                 let user_pk: Vec<u8> = user_pk.into();

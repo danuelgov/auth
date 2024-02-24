@@ -1,6 +1,6 @@
 use auth_database::{
     user::columns::UserPrimaryKey,
-    user_profile::{self, columns::UserProfileName},
+    user_profile::{self, columns::UserProfileName, UserProfile},
 };
 use database_toolkit::{QueryBuilder, Transaction};
 use new_type::Handle;
@@ -45,7 +45,7 @@ fn query<'args>(
 ) -> database_toolkit::QueryBuilder<'args> {
     QueryBuilder::new()
         .insert_into(
-            user_profile::TABLE_NAME,
+            UserProfile,
             &[
                 user_profile::columns::USER_PK,
                 user_profile::columns::HANDLE,

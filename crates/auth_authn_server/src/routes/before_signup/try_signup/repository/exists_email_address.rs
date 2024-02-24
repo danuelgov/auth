@@ -1,4 +1,7 @@
-use auth_database::{credential::columns::CredentialPrimaryKey, user_credential};
+use auth_database::{
+    credential::columns::CredentialPrimaryKey,
+    user_credential::{self, UserCredential},
+};
 use database_toolkit::{DatabaseConnection, QueryBuilder};
 use new_type::EmailAddress;
 use sqlx::FromRow;
@@ -45,10 +48,9 @@ fn query<'q>(email_address: EmailAddress) -> QueryBuilder<'q> {
     let email_address = email_address.as_str().to_owned();
 
     QueryBuilder::new()
-        .select()
-        .write("COUNT(*)")
-        .alias("count")
-        .from(user_credential::TABLE_NAME)
+        .select(UserCredential, |builder| {
+            builder.write("COUNT(*)").alias("count")
+        })
         .where_(|builder| {
             builder
                 .condition(|builder| {

@@ -43,35 +43,47 @@ impl<'args> QueryBuilder<'args> {
     }
 
     #[inline]
-    pub fn select(self) -> Self {
-        self.write("SELECT")
+    pub fn select<T, F>(self, table: T, f: F) -> Self
+    where
+        T: Table,
+        F: FnOnce(Self) -> Self,
+    {
+        self.write("SELECT").f(f).write("FROM").table(table)
     }
 
     #[inline]
-    pub fn insert_into(self, table: Table, columns: &[Column]) -> Self {
+    pub fn insert_into<T>(self, table: T, columns: &[Column<T>]) -> Self
+    where
+        T: Table,
+    {
         self.write("INSERT INTO")
             .table(table)
             .nested(|builder| builder.columns(columns))
     }
 
     #[inline]
-    pub fn update(self, table: Table) -> Self {
+    pub fn update<T>(self, table: T) -> Self
+    where
+        T: Table,
+    {
         self.write("UPDATE").table(table)
     }
 
     #[inline]
-    pub fn delete_from(self, table: Table) -> Self {
+    pub fn delete_from<T>(self, table: T) -> Self
+    where
+        T: Table,
+    {
         self.write("DELETE FROM").table(table)
     }
 
     #[inline]
-    pub fn from(self, table: Table) -> Self {
-        self.write("FROM").table(table)
-    }
-
-    #[inline]
-    pub fn set(self) -> Self {
-        self.write("SET")
+    pub fn set<T, V>(self, column: Column<T>, value: V) -> Self
+    where
+        T: Table,
+        for<'q> V: 'q + Send + Encode<'q, MySql> + Type<MySql>,
+    {
+        self.write("SET").column(column).eq().value(value)
     }
 
     #[inline]
@@ -93,53 +105,40 @@ impl<'args> QueryBuilder<'args> {
     }
 
     #[inline]
-    pub fn limit(self, limit: u64) -> Self {
-        self.write("LIMIT").write(limit)
-    }
-
-    #[inline]
-    pub fn offset(self, offset: u64) -> Self {
-        self.write("OFFSET").write(offset)
-    }
-
-    #[inline]
     pub fn limit_offset(self, limit: u64, offset: u64) -> Self {
-        self.limit(limit).offset(offset)
+        self.write("LIMIT")
+            .write(limit)
+            .write("OFFSET")
+            .write(offset)
     }
 
     #[inline]
-    pub fn order_by(self, column: Column) -> Self {
+    pub fn order_by<T>(self, column: Column<T>) -> Self
+    where
+        T: Table,
+    {
         self.write("ORDER BY").column(column)
     }
 
     #[inline]
-    pub fn asc(self) -> Self {
-        self.write("ASC")
+    pub fn asc<T>(self, column: Column<T>) -> Self
+    where
+        T: Table,
+    {
+        self.column(column).write("ASC")
     }
 
     #[inline]
-    pub fn desc(self) -> Self {
-        self.write("DESC")
-    }
-
-    #[inline]
-    pub fn on(self) -> Self {
-        self.write("ON")
-    }
-
-    #[inline]
-    pub fn join(self, table: Table) -> Self {
-        self.write("JOIN").table(table)
+    pub fn desc<T>(self, column: Column<T>) -> Self
+    where
+        T: Table,
+    {
+        self.column(column).write("DESC")
     }
 
     #[inline]
     pub fn comma(self) -> Self {
         self.write(", ")
-    }
-
-    #[inline]
-    pub fn semicolon(self) -> Self {
-        self.write(";")
     }
 
     #[inline]
@@ -161,12 +160,10 @@ impl<'args> QueryBuilder<'args> {
     }
 
     #[inline]
-    pub fn placeholder(self) -> Self {
-        self.write("?")
-    }
-
-    #[inline]
-    pub fn symbol(mut self, name: &str) -> Self {
+    pub fn symbol<S>(mut self, name: S) -> Self
+    where
+        S: std::fmt::Display,
+    {
         self.inner.push("`");
         self.inner.push(name);
         self.inner.push("` ");
@@ -174,17 +171,26 @@ impl<'args> QueryBuilder<'args> {
     }
 
     #[inline]
-    pub fn table(self, name: Table) -> Self {
-        self.symbol(name.0)
+    pub fn table<T>(self, _: T) -> Self
+    where
+        T: Table,
+    {
+        self.symbol(T::NAME)
     }
 
     #[inline]
-    pub fn column(self, column: Column) -> Self {
-        self.symbol(column.0)
+    pub fn column<T>(self, column: Column<T>) -> Self
+    where
+        T: Table,
+    {
+        self.write(column)
     }
 
     #[inline]
-    pub fn alias_column(self, column: Column, alias: &str) -> Self {
+    pub fn alias_column<T>(self, column: Column<T>, alias: &str) -> Self
+    where
+        T: Table,
+    {
         self.column(column).alias(alias)
     }
 
@@ -197,9 +203,19 @@ impl<'args> QueryBuilder<'args> {
     }
 
     #[inline]
-    pub fn assign_value<T>(self, column: Column, value: T) -> Self
+    pub fn join<T, F>(self, table: T, f: F) -> Self
     where
-        for<'q> T: 'q + Send + Encode<'q, MySql> + Type<MySql>,
+        T: Table,
+        F: FnOnce(Self) -> Self,
+    {
+        self.write("JOIN").table(table).write("ON").condition(f)
+    }
+
+    #[inline]
+    pub fn assign_value<T, V>(self, column: Column<T>, value: V) -> Self
+    where
+        T: Table,
+        for<'q> V: 'q + Send + Encode<'q, MySql> + Type<MySql>,
     {
         self.column(column).eq().value(value)
     }
@@ -311,7 +327,10 @@ impl<'args> QueryBuilder<'args> {
     }
 
     #[inline]
-    pub fn columns(self, columns: &[Column]) -> Self {
+    pub fn columns<T>(self, columns: &[Column<T>]) -> Self
+    where
+        T: Table,
+    {
         self.separated(columns.iter(), |builder, &column| builder.column(column))
     }
 

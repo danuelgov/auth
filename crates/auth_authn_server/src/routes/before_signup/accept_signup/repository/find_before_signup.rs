@@ -3,6 +3,7 @@ use auth_database::{
     before_signup::{
         self,
         columns::{BeforeSignupIdentity, BeforeSignupPrimaryKey},
+        BeforeSignup,
     },
     user_profile::columns::UserProfileName,
 };
@@ -101,14 +102,14 @@ fn query<'q>(before_signup_id: BeforeSignupIdentity) -> QueryBuilder<'q> {
     let before_signup_id: Vec<u8> = before_signup_id.into();
 
     QueryBuilder::new()
-        .select()
-        .columns(&[
-            before_signup::columns::BEFORE_SIGNUP_PK,
-            before_signup::columns::PAYLOAD,
-            before_signup::columns::EXPIRED_AT,
-            before_signup::columns::COMPLETED_AT,
-        ])
-        .from(before_signup::TABLE_NAME)
+        .select(BeforeSignup, |builder| {
+            builder.columns(&[
+                before_signup::columns::BEFORE_SIGNUP_PK,
+                before_signup::columns::PAYLOAD,
+                before_signup::columns::EXPIRED_AT,
+                before_signup::columns::COMPLETED_AT,
+            ])
+        })
         .where_(|builder| {
             builder.condition(|builder| {
                 builder

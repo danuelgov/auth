@@ -87,6 +87,13 @@ impl TryFrom<Vec<u8>> for IpAddr {
     }
 }
 
+impl From<std::net::IpAddr> for IpAddr {
+    #[inline]
+    fn from(value: std::net::IpAddr) -> Self {
+        Self(value)
+    }
+}
+
 impl<'de> Deserialize<'de> for IpAddr {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where

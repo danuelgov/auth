@@ -24,6 +24,22 @@ impl From<Salt> for Vec<u8> {
     }
 }
 
+impl TryFrom<Vec<u8>> for Salt {
+    type Error = Vec<u8>;
+
+    #[inline]
+    fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
+        if bytes.len() != std::mem::size_of::<u128>() {
+            return Err(bytes);
+        }
+
+        let mut array = [0; std::mem::size_of::<u128>()];
+        array.copy_from_slice(&bytes);
+
+        Ok(Self(u128::from_be_bytes(array)))
+    }
+}
+
 impl Salt {
     pub fn new() -> Self {
         let mut rng = rand::thread_rng();

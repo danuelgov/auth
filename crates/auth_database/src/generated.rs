@@ -67,6 +67,20 @@ pub mod activity {
             }
         }
 
+        impl From<String> for ActivityName {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for ActivityName {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
+            }
+        }
+
         impl ActivityName {
             #[inline]
             pub fn as_str(&self) -> &str {
@@ -138,6 +152,20 @@ pub mod agreement {
                     return Err(serde::de::Error::custom("too long"));
                 }
                 Ok(Self(source))
+            }
+        }
+
+        impl From<String> for AgreementName {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for AgreementName {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
             }
         }
 
@@ -415,6 +443,20 @@ pub mod credential {
             }
         }
 
+        impl From<String> for CredentialName {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for CredentialName {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
+            }
+        }
+
         impl CredentialName {
             #[inline]
             pub fn as_str(&self) -> &str {
@@ -573,6 +615,20 @@ pub mod hasher {
             }
         }
 
+        impl From<String> for HasherName {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for HasherName {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
+            }
+        }
+
         impl HasherName {
             #[inline]
             pub fn as_str(&self) -> &str {
@@ -689,6 +745,20 @@ pub mod permission {
             }
         }
 
+        impl From<String> for PermissionName {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for PermissionName {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
+            }
+        }
+
         impl PermissionName {
             #[inline]
             pub fn as_str(&self) -> &str {
@@ -748,6 +818,20 @@ pub mod policy {
                     return Err(serde::de::Error::custom("too long"));
                 }
                 Ok(Self(source))
+            }
+        }
+
+        impl From<String> for PolicyName {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for PolicyName {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
             }
         }
 
@@ -820,6 +904,20 @@ pub mod role {
                     return Err(serde::de::Error::custom("too long"));
                 }
                 Ok(Self(source))
+            }
+        }
+
+        impl From<String> for RoleName {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for RoleName {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
             }
         }
 
@@ -1011,6 +1109,20 @@ pub mod user_credential {
             }
         }
 
+        impl From<String> for UserCredentialExternalId {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for UserCredentialExternalId {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
+            }
+        }
+
         impl UserCredentialExternalId {
             #[inline]
             pub fn as_str(&self) -> &str {
@@ -1060,10 +1172,35 @@ pub mod user_credential__has__hasher {
         #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
         pub struct UserCredentialHasHasherHash(new_type::Hash);
 
+        impl From<String> for UserCredentialHasHasherHash {
+            #[inline]
+            fn from(hash: String) -> Self {
+                Self(hash.into())
+            }
+        }
+
+        impl From<&str> for UserCredentialHasHasherHash {
+            #[inline]
+            fn from(hash: &str) -> Self {
+                Self(hash.into())
+            }
+        }
+
         pub type HasherPrimaryKey = crate::generated::hasher::PrimaryKey;
 
         #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
         pub struct UserCredentialHasHasherSalt(new_type::Salt);
+
+        impl TryFrom<Vec<u8>> for UserCredentialHasHasherSalt {
+            type Error = Vec<u8>;
+
+            #[inline]
+            fn try_from(salt: Vec<u8>) -> Result<Self, Self::Error> {
+                let salt = salt.try_into()?;
+
+                Ok(Self(salt))
+            }
+        }
 
         pub type UserCredentialPrimaryKey = crate::generated::user_credential::PrimaryKey;
     }
@@ -1127,6 +1264,20 @@ pub mod user_group {
                     return Err(serde::de::Error::custom("too long"));
                 }
                 Ok(Self(source))
+            }
+        }
+
+        impl From<String> for UserGroupName {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for UserGroupName {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
             }
         }
 
@@ -1375,6 +1526,20 @@ pub mod user_profile {
             }
         }
 
+        impl From<String> for UserProfileBio {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for UserProfileBio {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
+            }
+        }
+
         impl UserProfileBio {
             #[inline]
             pub fn as_str(&self) -> &str {
@@ -1384,6 +1549,15 @@ pub mod user_profile {
 
         #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
         pub struct UserProfileHandle(new_type::Handle);
+
+        impl std::str::FromStr for UserProfileHandle {
+            type Err = new_type::HandleError;
+
+            #[inline]
+            fn from_str(source: &str) -> Result<Self, Self::Err> {
+                Ok(Self(source.parse()?))
+            }
+        }
 
         #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]
         pub struct UserProfileImage(String);
@@ -1407,6 +1581,20 @@ pub mod user_profile {
                     return Err(serde::de::Error::custom("too long"));
                 }
                 Ok(Self(source))
+            }
+        }
+
+        impl From<String> for UserProfileImage {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for UserProfileImage {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
             }
         }
 
@@ -1442,6 +1630,20 @@ pub mod user_profile {
                     return Err(serde::de::Error::custom("too long"));
                 }
                 Ok(Self(source))
+            }
+        }
+
+        impl From<String> for UserProfileName {
+            #[inline]
+            fn from(source: String) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<&str> for UserProfileName {
+            #[inline]
+            fn from(source: &str) -> Self {
+                Self(source.to_owned())
             }
         }
 

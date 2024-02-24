@@ -124,6 +124,30 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
         writeln!(self.file)?;
         writeln!(
             self.file,
+            "        impl From<String> for {}{} {{",
+            self.table_name.to_case(Case::Pascal),
+            name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn from(source: String) -> Self {{")?;
+        writeln!(self.file, "                Self(source)")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<&str> for {}{} {{",
+            self.table_name.to_case(Case::Pascal),
+            name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn from(source: &str) -> Self {{")?;
+        writeln!(self.file, "                Self(source.to_owned())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
             "        impl {}{} {{",
             self.table_name.to_case(Case::Pascal),
             name.to_case(Case::Pascal)
@@ -162,6 +186,22 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
             "        pub struct {}Handle(new_type::Handle);",
             self.table_name.to_case(Case::Pascal),
         )?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl std::str::FromStr for {}Handle {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            type Err = new_type::HandleError;")?;
+        writeln!(self.file)?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn from_str(source: &str) -> Result<Self, Self::Err> {{"
+        )?;
+        writeln!(self.file, "                Ok(Self(source.parse()?))")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
 
         Ok(())
     }
@@ -177,6 +217,28 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
             "        pub struct {}Hash(new_type::Hash);",
             self.table_name.to_case(Case::Pascal),
         )?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<String> for {}Hash {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn from(hash: String) -> Self {{")?;
+        writeln!(self.file, "                Self(hash.into())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<&str> for {}Hash {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn from(hash: &str) -> Self {{")?;
+        writeln!(self.file, "                Self(hash.into())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
 
         Ok(())
     }
@@ -192,6 +254,24 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
             "        pub struct {}Salt(new_type::Salt);",
             self.table_name.to_case(Case::Pascal),
         )?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl TryFrom<Vec<u8>> for {}Salt {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            type Error = Vec<u8>;")?;
+        writeln!(self.file)?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn try_from(salt: Vec<u8>) -> Result<Self, Self::Error> {{"
+        )?;
+        writeln!(self.file, "                let salt = salt.try_into()?;")?;
+        writeln!(self.file)?;
+        writeln!(self.file, "                Ok(Self(salt))")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
 
         Ok(())
     }

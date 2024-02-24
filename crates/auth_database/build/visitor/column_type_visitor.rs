@@ -302,6 +302,35 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
             "        pub struct {}Image(String);",
             self.table_name.to_case(Case::Pascal),
         )?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl std::ops::Deref for {}Image {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            type Target = str;")?;
+        writeln!(self.file)?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn deref(&self) -> &Self::Target {{")?;
+        writeln!(self.file, "                &self.0")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl std::str::FromStr for {}Image {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            type Err = std::io::Error;")?;
+        writeln!(self.file)?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn from_str(source: &str) -> Result<Self, Self::Err> {{"
+        )?;
+        writeln!(self.file, "                Ok(Self(source.into()))")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
 
         Ok(())
     }
@@ -317,6 +346,109 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
             "        pub struct {}IpAddr(new_type::IpAddr);",
             self.table_name.to_case(Case::Pascal),
         )?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl std::ops::Deref for {}IpAddr {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            type Target = new_type::IpAddr;")?;
+        writeln!(self.file)?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn deref(&self) -> &Self::Target {{")?;
+        writeln!(self.file, "                &self.0")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl std::str::FromStr for {}IpAddr {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(
+            self.file,
+            "            type Err = std::net::AddrParseError;"
+        )?;
+        writeln!(self.file)?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn from_str(source: &str) -> Result<Self, Self::Err> {{"
+        )?;
+        writeln!(self.file, "                Ok(Self(source.parse()?))")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<[u8; 4]> for {}IpAddr {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn from(value: [u8; 4]) -> Self {{")?;
+        writeln!(self.file, "                Self(value.into())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<[u8; 16]> for {}IpAddr {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn from(value: [u8; 16]) -> Self {{")?;
+        writeln!(self.file, "                Self(value.into())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<[u16; 8]> for {}IpAddr {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn from(value: [u16; 8]) -> Self {{")?;
+        writeln!(self.file, "                Self(value.into())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<u32> for {}IpAddr {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn from(value: u32) -> Self {{")?;
+        writeln!(self.file, "                Self(value.into())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<u128> for {}IpAddr {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn from(value: u128) -> Self {{")?;
+        writeln!(self.file, "                Self(value.into())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl std::convert::TryFrom<&[u8]> for {}IpAddr {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            type Error = Vec<u8>;")?;
+        writeln!(self.file)?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn try_from(value: &[u8]) -> Result<Self, Self::Error> {{"
+        )?;
+        writeln!(self.file, "                Ok(Self(value.try_into()?))")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
 
         Ok(())
     }

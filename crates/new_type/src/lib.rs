@@ -24,6 +24,9 @@ pub mod hash;
 #[cfg(feature = "handle")]
 pub mod handle;
 
+#[cfg(feature = "image_url")]
+pub mod image_url;
+
 #[cfg(feature = "email_address")]
 pub use email_address::*;
 
@@ -41,3 +44,6 @@ pub use hash::*;
 
 #[cfg(feature = "handle")]
 pub use handle::*;
+
+#[cfg(feature = "image_url")]
+pub use image_url::*;

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct EmailAddress(dep_email_address::EmailAddress);
 
 impl std::fmt::Display for EmailAddress {

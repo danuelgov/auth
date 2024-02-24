@@ -18,12 +18,22 @@ sqlx = { version = "0.7", features = [
   "chrono",
 ] }
 tokio = { version = "1.36.0", features = ["rt"], optional = true }
+url = { version = "2.5.0", features = ["serde"], optional = true }
 
 [features]
-default = ["email_address", "ip_addr", "time", "password", "hash", "handle"]
+default = [
+  "email_address",
+  "ip_addr",
+  "time",
+  "password",
+  "hash",
+  "handle",
+  "image_url",
+]
 email_address = ["dep:dep_email_address"]
 ip_addr = []
 time = ["dep:chrono"]
 password = ["hash", "dep:rand"]
 hash = ["dep:rust-argon2", "dep:rand", "dep:tokio"]
 handle = ["hash", "dep:base58", "dep:rand"]
+image_url = ["dep:url"]

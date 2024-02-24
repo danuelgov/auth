@@ -1013,6 +1013,68 @@ pub mod user_activity {
         #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
         pub struct UserActivityIpAddr(new_type::IpAddr);
 
+        impl std::ops::Deref for UserActivityIpAddr {
+            type Target = new_type::IpAddr;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
+        impl std::str::FromStr for UserActivityIpAddr {
+            type Err = std::net::AddrParseError;
+
+            #[inline]
+            fn from_str(source: &str) -> Result<Self, Self::Err> {
+                Ok(Self(source.parse()?))
+            }
+        }
+
+        impl From<[u8; 4]> for UserActivityIpAddr {
+            #[inline]
+            fn from(value: [u8; 4]) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl From<[u8; 16]> for UserActivityIpAddr {
+            #[inline]
+            fn from(value: [u8; 16]) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl From<[u16; 8]> for UserActivityIpAddr {
+            #[inline]
+            fn from(value: [u16; 8]) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl From<u32> for UserActivityIpAddr {
+            #[inline]
+            fn from(value: u32) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl From<u128> for UserActivityIpAddr {
+            #[inline]
+            fn from(value: u128) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl std::convert::TryFrom<&[u8]> for UserActivityIpAddr {
+            type Error = Vec<u8>;
+
+            #[inline]
+            fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+                Ok(Self(value.try_into()?))
+            }
+        }
+
         pub type UserPrimaryKey = crate::generated::user::PrimaryKey;
     }
 }
@@ -1746,6 +1808,68 @@ pub mod user_session {
 
         #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
         pub struct UserSessionIpAddr(new_type::IpAddr);
+
+        impl std::ops::Deref for UserSessionIpAddr {
+            type Target = new_type::IpAddr;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
+        impl std::str::FromStr for UserSessionIpAddr {
+            type Err = std::net::AddrParseError;
+
+            #[inline]
+            fn from_str(source: &str) -> Result<Self, Self::Err> {
+                Ok(Self(source.parse()?))
+            }
+        }
+
+        impl From<[u8; 4]> for UserSessionIpAddr {
+            #[inline]
+            fn from(value: [u8; 4]) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl From<[u8; 16]> for UserSessionIpAddr {
+            #[inline]
+            fn from(value: [u8; 16]) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl From<[u16; 8]> for UserSessionIpAddr {
+            #[inline]
+            fn from(value: [u16; 8]) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl From<u32> for UserSessionIpAddr {
+            #[inline]
+            fn from(value: u32) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl From<u128> for UserSessionIpAddr {
+            #[inline]
+            fn from(value: u128) -> Self {
+                Self(value.into())
+            }
+        }
+
+        impl std::convert::TryFrom<&[u8]> for UserSessionIpAddr {
+            type Error = Vec<u8>;
+
+            #[inline]
+            fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+                Ok(Self(value.try_into()?))
+            }
+        }
 
         pub type UserPrimaryKey = crate::generated::user::PrimaryKey;
 

@@ -6,14 +6,14 @@ pub struct Password(String);
 impl std::fmt::Display for Password {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Password(MASKED)")
+        write!(f, "Password(MASKED, len = {})", self.len())
     }
 }
 
 impl std::fmt::Debug for Password {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Password(MASKED)")
+        write!(f, "Password(MASKED, len = {})", self.len())
     }
 }
 

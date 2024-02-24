@@ -1,26 +1,28 @@
 mod repository;
 mod request;
-mod response;
 mod service;
 
 use database_toolkit::DatabaseConnectionPool;
 use repository::*;
 use request::*;
-use response::*;
-use rocket::{serde::json::Json, State};
+use rocket::{http::Status, serde::json::Json, State};
 use service::*;
 
+use self::find_before_signup::FindBeforeSignupError;
+
 #[post("/signup/accept", data = "<body>")]
-pub async fn handler(pool: &State<DatabaseConnectionPool>, body: Json<Data>) -> Response {
+pub async fn handler(
+    pool: &State<DatabaseConnectionPool>,
+    body: Json<Data>,
+) -> Result<Status, Status> {
     let service = service(pool.inner().clone(), Repository, body);
-    let expected = service.execute().await;
-
-    dbg!(&expected);
-
-    Response {
-        body: Json(Body {
-            message: "Hello, world!".to_string(),
-        }),
+    match service.execute().await {
+        Ok(_) => Ok(Status::NoContent),
+        Err(ServiceError::FindBeforeSignup(FindBeforeSignupError::NotFound)) => {
+            Err(Status::NotFound)
+        }
+        Err(ServiceError::FindBeforeSignup(FindBeforeSignupError::Expired)) => Err(Status::Gone),
+        _ => Err(Status::InternalServerError),
     }
 }
 

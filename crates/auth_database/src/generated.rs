@@ -317,9 +317,53 @@ pub mod before_new_password {
         #[serde(transparent)]
         pub struct BeforeNewPasswordCompletedAt(chrono::DateTime<chrono::Utc>);
 
+        impl From<chrono::DateTime<chrono::Utc>> for BeforeNewPasswordCompletedAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for BeforeNewPasswordCompletedAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for BeforeNewPasswordCompletedAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
         #[derive(Serialize, Deserialize)]
         #[serde(transparent)]
         pub struct BeforeNewPasswordExpiredAt(chrono::DateTime<chrono::Utc>);
+
+        impl From<chrono::DateTime<chrono::Utc>> for BeforeNewPasswordExpiredAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for BeforeNewPasswordExpiredAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for BeforeNewPasswordExpiredAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
 
         pub type BeforeNewPasswordIdentity = super::Identity;
 
@@ -369,9 +413,53 @@ pub mod before_signup {
         #[serde(transparent)]
         pub struct BeforeSignupCompletedAt(chrono::DateTime<chrono::Utc>);
 
+        impl From<chrono::DateTime<chrono::Utc>> for BeforeSignupCompletedAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for BeforeSignupCompletedAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for BeforeSignupCompletedAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
         #[derive(Serialize, Deserialize)]
         #[serde(transparent)]
         pub struct BeforeSignupExpiredAt(chrono::DateTime<chrono::Utc>);
+
+        impl From<chrono::DateTime<chrono::Utc>> for BeforeSignupExpiredAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for BeforeSignupExpiredAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for BeforeSignupExpiredAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
 
         pub type BeforeSignupIdentity = super::Identity;
 
@@ -967,6 +1055,28 @@ pub mod user {
         #[serde(transparent)]
         pub struct UserDeactivatedAt(chrono::DateTime<chrono::Utc>);
 
+        impl From<chrono::DateTime<chrono::Utc>> for UserDeactivatedAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for UserDeactivatedAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for UserDeactivatedAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
         pub type UserIdentity = super::Identity;
 
         pub type UserPrimaryKey = crate::generated::user::PrimaryKey;
@@ -1110,6 +1220,28 @@ pub mod user_agreement {
         #[serde(transparent)]
         pub struct UserAgreementExpiredAt(chrono::DateTime<chrono::Utc>);
 
+        impl From<chrono::DateTime<chrono::Utc>> for UserAgreementExpiredAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for UserAgreementExpiredAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for UserAgreementExpiredAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
         pub type UserPrimaryKey = crate::generated::user::PrimaryKey;
     }
 }
@@ -1212,11 +1344,10 @@ pub mod user_credential__has__hasher {
 
     pub type Column = database_toolkit::Column<UserCredentialHasHasher>;
 
-    pub const ALL_COLUMNS: [Column; 5] = [
+    pub const ALL_COLUMNS: [Column; 4] = [
         columns::EXPIRED_AT,
         columns::HASH,
         columns::HASHER_PK,
-        columns::SALT,
         columns::USER_CREDENTIAL_PK,
     ];
 
@@ -1224,12 +1355,33 @@ pub mod user_credential__has__hasher {
         pub const EXPIRED_AT: super::Column = super::Column::new("expired_at");
         pub const HASH: super::Column = super::Column::new("hash");
         pub const HASHER_PK: super::Column = super::Column::new("hasher_pk");
-        pub const SALT: super::Column = super::Column::new("salt");
         pub const USER_CREDENTIAL_PK: super::Column = super::Column::new("user_credential_pk");
 
         #[derive(Serialize, Deserialize)]
         #[serde(transparent)]
         pub struct UserCredentialHasHasherExpiredAt(chrono::DateTime<chrono::Utc>);
+
+        impl From<chrono::DateTime<chrono::Utc>> for UserCredentialHasHasherExpiredAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for UserCredentialHasHasherExpiredAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for UserCredentialHasHasherExpiredAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
 
         #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
         pub struct UserCredentialHasHasherHash(new_type::Hash);
@@ -1248,21 +1400,21 @@ pub mod user_credential__has__hasher {
             }
         }
 
-        pub type HasherPrimaryKey = crate::generated::hasher::PrimaryKey;
-
-        #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-        pub struct UserCredentialHasHasherSalt(new_type::Salt);
-
-        impl TryFrom<Vec<u8>> for UserCredentialHasHasherSalt {
-            type Error = Vec<u8>;
-
+        impl From<UserCredentialHasHasherHash> for new_type::Hash {
             #[inline]
-            fn try_from(salt: Vec<u8>) -> Result<Self, Self::Error> {
-                let salt = salt.try_into()?;
-
-                Ok(Self(salt))
+            fn from(hash: UserCredentialHasHasherHash) -> Self {
+                hash.0
             }
         }
+
+        impl AsRef<new_type::Hash> for UserCredentialHasHasherHash {
+            #[inline]
+            fn as_ref(&self) -> &new_type::Hash {
+                &self.0
+            }
+        }
+
+        pub type HasherPrimaryKey = crate::generated::hasher::PrimaryKey;
 
         pub type UserCredentialPrimaryKey = crate::generated::user_credential::PrimaryKey;
     }
@@ -1391,6 +1543,28 @@ pub mod user_group__has__permission {
         #[serde(transparent)]
         pub struct UserGroupHasPermissionCreatedAt(chrono::DateTime<chrono::Utc>);
 
+        impl From<chrono::DateTime<chrono::Utc>> for UserGroupHasPermissionCreatedAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for UserGroupHasPermissionCreatedAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for UserGroupHasPermissionCreatedAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
         pub type UserGroupHasPermissionIdentity = super::Identity;
 
         pub type PermissionPrimaryKey = crate::generated::permission::PrimaryKey;
@@ -1435,6 +1609,28 @@ pub mod user_group__has__role {
         #[derive(Serialize, Deserialize)]
         #[serde(transparent)]
         pub struct UserGroupHasRoleCreatedAt(chrono::DateTime<chrono::Utc>);
+
+        impl From<chrono::DateTime<chrono::Utc>> for UserGroupHasRoleCreatedAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for UserGroupHasRoleCreatedAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for UserGroupHasRoleCreatedAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
 
         pub type UserGroupHasRoleIdentity = super::Identity;
 
@@ -1481,6 +1677,28 @@ pub mod user_group__has__user {
         #[serde(transparent)]
         pub struct UserGroupHasUserCreatedAt(chrono::DateTime<chrono::Utc>);
 
+        impl From<chrono::DateTime<chrono::Utc>> for UserGroupHasUserCreatedAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for UserGroupHasUserCreatedAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for UserGroupHasUserCreatedAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
         pub type UserGroupHasUserIdentity = super::Identity;
 
         pub type UserGroupPrimaryKey = crate::generated::user_group::PrimaryKey;
@@ -1525,6 +1743,28 @@ pub mod user_permission {
         #[derive(Serialize, Deserialize)]
         #[serde(transparent)]
         pub struct UserPermissionCreatedAt(chrono::DateTime<chrono::Utc>);
+
+        impl From<chrono::DateTime<chrono::Utc>> for UserPermissionCreatedAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for UserPermissionCreatedAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for UserPermissionCreatedAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
 
         pub type UserPermissionIdentity = super::Identity;
 
@@ -1757,6 +1997,28 @@ pub mod user_role {
         #[serde(transparent)]
         pub struct UserRoleCreatedAt(chrono::DateTime<chrono::Utc>);
 
+        impl From<chrono::DateTime<chrono::Utc>> for UserRoleCreatedAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for UserRoleCreatedAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for UserRoleCreatedAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
         pub type UserRoleIdentity = super::Identity;
 
         pub type RolePrimaryKey = crate::generated::role::PrimaryKey;
@@ -1803,6 +2065,28 @@ pub mod user_session {
         #[derive(Serialize, Deserialize)]
         #[serde(transparent)]
         pub struct UserSessionExpiredAt(chrono::DateTime<chrono::Utc>);
+
+        impl From<chrono::DateTime<chrono::Utc>> for UserSessionExpiredAt {
+            #[inline]
+            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {
+                Self(source)
+            }
+        }
+
+        impl From<chrono::NaiveDateTime> for UserSessionExpiredAt {
+            #[inline]
+            fn from(source: chrono::NaiveDateTime) -> Self {
+                Self(source.and_utc())
+            }
+        }
+        impl std::ops::Deref for UserSessionExpiredAt {
+            type Target = chrono::DateTime<chrono::Utc>;
+
+            #[inline]
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
 
         pub type UserSessionIdentity = super::Identity;
 

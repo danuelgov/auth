@@ -4,15 +4,15 @@ use auth_database::{
     user_credential__has__hasher::{self, UserCredentialHasHasher},
 };
 use database_toolkit::{QueryBuilder, Transaction};
-use new_type::{Password, Salt};
+use new_type::Hash;
 
 pub trait CreateUserCredentialHasherContract {
     async fn create_user_credential_hasher(
         &self,
         transaction: &mut Transaction,
         user_credential_pk: UserCredentialPrimaryKey,
-        password: Password,
-        salt: Salt,
+        hasher_pk: HasherPrimaryKey,
+        hash: Hash,
         expired_at: chrono::DateTime<chrono::Utc>,
     ) -> Result<(), CreateUserCredentialHasherError>;
 }
@@ -27,11 +27,11 @@ impl CreateUserCredentialHasherContract for super::Repository {
         &self,
         transaction: &mut Transaction,
         user_credential_pk: UserCredentialPrimaryKey,
-        password: Password,
-        salt: Salt,
+        hasher_pk: HasherPrimaryKey,
+        hash: Hash,
         expired_at: chrono::DateTime<chrono::Utc>,
     ) -> Result<(), CreateUserCredentialHasherError> {
-        query(user_credential_pk, password, salt, expired_at)
+        query(user_credential_pk, hasher_pk, hash, expired_at)
             .build()
             .execute(&mut **transaction)
             .await
@@ -43,8 +43,8 @@ impl CreateUserCredentialHasherContract for super::Repository {
 
 fn query<'args>(
     user_credential_pk: UserCredentialPrimaryKey,
-    password: Password,
-    salt: Salt,
+    hasher_pk: HasherPrimaryKey,
+    hash: Hash,
     expired_at: chrono::DateTime<chrono::Utc>,
 ) -> QueryBuilder<'args> {
     QueryBuilder::new()
@@ -54,16 +54,14 @@ fn query<'args>(
                 user_credential__has__hasher::columns::USER_CREDENTIAL_PK,
                 user_credential__has__hasher::columns::HASHER_PK,
                 user_credential__has__hasher::columns::HASH,
-                user_credential__has__hasher::columns::SALT,
                 user_credential__has__hasher::columns::EXPIRED_AT,
             ],
         )
         .values(|builder| {
             builder.nested(|builder| {
                 let user_credential_pk: Vec<u8> = user_credential_pk.into();
-                let hasher_pk: Vec<u8> = HasherPrimaryKey::ARGON2.into();
-                let hash = password.as_str().to_owned();
-                let salt: Vec<u8> = salt.into();
+                let hasher_pk: Vec<u8> = hasher_pk.into();
+                let hash = hash.as_str().to_owned();
                 let expired_at = expired_at;
 
                 builder
@@ -72,8 +70,6 @@ fn query<'args>(
                     .value(hasher_pk)
                     .comma()
                     .value(hash)
-                    .comma()
-                    .value(salt)
                     .comma()
                     .value(expired_at)
             })

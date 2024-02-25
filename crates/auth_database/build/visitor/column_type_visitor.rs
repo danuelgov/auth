@@ -171,6 +171,52 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
             self.table_name.to_case(Case::Pascal),
             name.to_case(Case::Pascal)
         )?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<chrono::DateTime<chrono::Utc>> for {}{} {{",
+            self.table_name.to_case(Case::Pascal),
+            name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {{"
+        )?;
+        writeln!(self.file, "                Self(source)")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<chrono::NaiveDateTime> for {}{} {{",
+            self.table_name.to_case(Case::Pascal),
+            name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn from(source: chrono::NaiveDateTime) -> Self {{"
+        )?;
+        writeln!(self.file, "                Self(source.and_utc())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(
+            self.file,
+            "        impl std::ops::Deref for {}{} {{",
+            self.table_name.to_case(Case::Pascal),
+            name.to_case(Case::Pascal)
+        )?;
+        writeln!(
+            self.file,
+            "            type Target = chrono::DateTime<chrono::Utc>;"
+        )?;
+        writeln!(self.file)?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn deref(&self) -> &Self::Target {{")?;
+        writeln!(self.file, "                &self.0")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
 
         Ok(())
     }

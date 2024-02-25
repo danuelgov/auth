@@ -42,7 +42,7 @@ impl Serialize for EmailAddress {
     where
         S: Serializer,
     {
-        serializer.serialize_str(self.to_string().as_str())
+        serializer.serialize_str(self.as_str())
     }
 }
 

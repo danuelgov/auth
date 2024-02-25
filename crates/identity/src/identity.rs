@@ -1,6 +1,7 @@
 use crate::{uuid, Prefix, PrefixKey, PrefixKeyError};
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct Identity<P: Prefix>(PrefixKey<P>);
 
 impl<P: Prefix> std::ops::Deref for Identity<P> {

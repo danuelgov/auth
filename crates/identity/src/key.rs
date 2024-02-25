@@ -1,4 +1,5 @@
 use crate::base58::{self, Base58DecodeError};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Key(pub(crate) u128);
@@ -58,10 +59,10 @@ impl TryFrom<Vec<u8>> for Key {
     }
 }
 
-impl serde::Serialize for Key {
+impl Serialize for Key {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer,
+        S: Serializer,
     {
         let id = base58::encode(self.to_be_bytes());
 
@@ -69,10 +70,10 @@ impl serde::Serialize for Key {
     }
 }
 
-impl<'de> serde::Deserialize<'de> for Key {
+impl<'de> Deserialize<'de> for Key {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: serde::Deserializer<'de>,
+        D: Deserializer<'de>,
     {
         let id = String::deserialize(deserializer)?;
         let id = base58::decode(&id).map_err(serde::de::Error::custom)?;

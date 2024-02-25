@@ -1,4 +1,9 @@
 use crate::{IpAddrV4, IpAddrV6};
+use rocket::{
+    http::Status,
+    request::{FromRequest, Outcome},
+    Request,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -58,6 +63,16 @@ impl From<u128> for IpAddr {
     }
 }
 
+impl From<IpAddr> for Vec<u8> {
+    #[inline]
+    fn from(value: IpAddr) -> Self {
+        match value.0 {
+            std::net::IpAddr::V4(ip_addr) => ip_addr.octets().to_vec(),
+            std::net::IpAddr::V6(ip_addr) => ip_addr.octets().to_vec(),
+        }
+    }
+}
+
 impl TryFrom<&[u8]> for IpAddr {
     type Error = Vec<u8>;
 
@@ -112,5 +127,17 @@ impl Serialize for IpAddr {
         S: serde::Serializer,
     {
         serializer.serialize_str(self.to_string().as_str())
+    }
+}
+
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for IpAddr {
+    type Error = std::convert::Infallible;
+
+    async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
+        match request.client_ip() {
+            Some(ip_addr) => Outcome::Success(Self(ip_addr)),
+            None => Outcome::Forward(Status::BadRequest),
+        }
     }
 }

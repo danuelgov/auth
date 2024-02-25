@@ -11,7 +11,6 @@ CREATE TABLE
     `user_credential_pk` BINARY(16) NOT NULL,
     `hasher_pk` BINARY(16) NOT NULL,
     `hash` TEXT NOT NULL,
-    `salt` BINARY(16) NOT NULL,
     `expired_at` DATETIME NOT NULL DEFAULT '9999-12-31 23:59:59',
     PRIMARY KEY (`user_credential_pk`)
   ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;

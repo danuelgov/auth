@@ -1,4 +1,4 @@
-use crate::{Hash, Hasher, Salt};
+use crate::{Hash, Hasher};
 
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Password(String);
@@ -37,8 +37,8 @@ impl std::ops::Deref for Password {
 
 impl Password {
     #[inline]
-    pub async fn hash(&self, hasher: Hasher, salt: &Salt) -> Result<Hash, crate::HasherError> {
-        hasher.hash(self.as_bytes(), salt).await
+    pub async fn hash(&self, hasher: Hasher) -> Result<Hash, crate::HasherError> {
+        hasher.hash(self.as_bytes()).await
     }
 
     #[inline]

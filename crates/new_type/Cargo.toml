@@ -8,6 +8,7 @@ base58 = { package = "bs58", version = "0.5.0", optional = true }
 chrono = { version = "0.4.33", features = ["now", "serde"], optional = true }
 dep_email_address = { package = "email_address", version = "0.2.4", optional = true }
 rand = { version = "0.8.5", optional = true }
+rocket = { version = "0.5.0", optional = true }
 rust-argon2 = { version = "2.1.0", optional = true }
 serde = { version = "1.0.196", features = ["derive"] }
 sqlx = { version = "0.7", features = [
@@ -31,7 +32,7 @@ default = [
   "image_url",
 ]
 email_address = ["dep:dep_email_address"]
-ip_addr = []
+ip_addr = ["dep:rocket"]
 time = ["dep:chrono"]
 password = ["hash", "dep:rand"]
 hash = ["dep:rust-argon2", "dep:rand", "dep:tokio"]

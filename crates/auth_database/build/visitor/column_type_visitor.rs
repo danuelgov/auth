@@ -478,6 +478,21 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
         writeln!(self.file)?;
         writeln!(
             self.file,
+            "        impl From<{}IpAddr> for Vec<u8> {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn from(value: {}IpAddr) -> Self {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "                value.0.into()")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
             "        impl std::convert::TryFrom<&[u8]> for {}IpAddr {{",
             self.table_name.to_case(Case::Pascal)
         )?;

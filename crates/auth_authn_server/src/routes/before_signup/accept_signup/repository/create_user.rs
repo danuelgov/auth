@@ -36,7 +36,7 @@ impl CreateUserContract for super::Repository {
     }
 }
 
-fn query<'args>(user_pk: UserPrimaryKey, user_id: UserIdentity) -> QueryBuilder<'args> {
+fn query<'q>(user_pk: UserPrimaryKey, user_id: UserIdentity) -> QueryBuilder<'q> {
     QueryBuilder::new()
         .insert_into(User, &[user::columns::USER_PK, user::columns::ID])
         .values(|builder| {

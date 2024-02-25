@@ -1176,6 +1176,13 @@ pub mod user_activity {
             }
         }
 
+        impl From<UserActivityIpAddr> for Vec<u8> {
+            #[inline]
+            fn from(value: UserActivityIpAddr) -> Self {
+                value.0.into()
+            }
+        }
+
         impl std::convert::TryFrom<&[u8]> for UserActivityIpAddr {
             type Error = Vec<u8>;
 
@@ -2143,6 +2150,13 @@ pub mod user_session {
             #[inline]
             fn from(value: u128) -> Self {
                 Self(value.into())
+            }
+        }
+
+        impl From<UserSessionIpAddr> for Vec<u8> {
+            #[inline]
+            fn from(value: UserSessionIpAddr) -> Self {
+                value.0.into()
             }
         }
 

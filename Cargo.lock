@@ -1206,6 +1206,7 @@ dependencies = [
  "chrono",
  "email_address",
  "rand",
+ "rocket",
  "rust-argon2",
  "serde",
  "sqlx",

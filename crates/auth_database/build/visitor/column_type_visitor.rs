@@ -171,6 +171,52 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
             self.table_name.to_case(Case::Pascal),
             name.to_case(Case::Pascal)
         )?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<chrono::DateTime<chrono::Utc>> for {}{} {{",
+            self.table_name.to_case(Case::Pascal),
+            name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn from(source: chrono::DateTime<chrono::Utc>) -> Self {{"
+        )?;
+        writeln!(self.file, "                Self(source)")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
+        writeln!(
+            self.file,
+            "        impl From<chrono::NaiveDateTime> for {}{} {{",
+            self.table_name.to_case(Case::Pascal),
+            name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn from(source: chrono::NaiveDateTime) -> Self {{"
+        )?;
+        writeln!(self.file, "                Self(source.and_utc())")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
+        writeln!(
+            self.file,
+            "        impl std::ops::Deref for {}{} {{",
+            self.table_name.to_case(Case::Pascal),
+            name.to_case(Case::Pascal)
+        )?;
+        writeln!(
+            self.file,
+            "            type Target = chrono::DateTime<chrono::Utc>;"
+        )?;
+        writeln!(self.file)?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(self.file, "            fn deref(&self) -> &Self::Target {{")?;
+        writeln!(self.file, "                &self.0")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
 
         Ok(())
     }
@@ -239,37 +285,33 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
         writeln!(self.file, "                Self(hash.into())")?;
         writeln!(self.file, "            }}")?;
         writeln!(self.file, "        }}")?;
-
-        Ok(())
-    }
-
-    fn visit_salt_type(&mut self, _name: &ColumnName) -> Result<(), std::io::Error> {
         writeln!(self.file)?;
         writeln!(
             self.file,
-            "        #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]"
-        )?;
-        writeln!(
-            self.file,
-            "        pub struct {}Salt(new_type::Salt);",
-            self.table_name.to_case(Case::Pascal),
-        )?;
-        writeln!(self.file)?;
-        writeln!(
-            self.file,
-            "        impl TryFrom<Vec<u8>> for {}Salt {{",
+            "        impl From<{}Hash> for new_type::Hash {{",
             self.table_name.to_case(Case::Pascal)
         )?;
-        writeln!(self.file, "            type Error = Vec<u8>;")?;
-        writeln!(self.file)?;
         writeln!(self.file, "            #[inline]")?;
         writeln!(
             self.file,
-            "            fn try_from(salt: Vec<u8>) -> Result<Self, Self::Error> {{"
+            "            fn from(hash: {}Hash) -> Self {{",
+            self.table_name.to_case(Case::Pascal)
         )?;
-        writeln!(self.file, "                let salt = salt.try_into()?;")?;
+        writeln!(self.file, "                hash.0")?;
+        writeln!(self.file, "            }}")?;
+        writeln!(self.file, "        }}")?;
         writeln!(self.file)?;
-        writeln!(self.file, "                Ok(Self(salt))")?;
+        writeln!(
+            self.file,
+            "        impl AsRef<new_type::Hash> for {}Hash {{",
+            self.table_name.to_case(Case::Pascal)
+        )?;
+        writeln!(self.file, "            #[inline]")?;
+        writeln!(
+            self.file,
+            "            fn as_ref(&self) -> &new_type::Hash {{"
+        )?;
+        writeln!(self.file, "                &self.0")?;
         writeln!(self.file, "            }}")?;
         writeln!(self.file, "        }}")?;
 

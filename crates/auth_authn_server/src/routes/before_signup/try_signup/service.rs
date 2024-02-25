@@ -3,10 +3,11 @@ use super::{
     exists_user_name::ExistsUserNameError, send_email::SendEmailError, RepositoryContract,
 };
 use auth_database::{
-    agreement::columns::AgreementIdentity, user_profile::columns::UserProfileName,
+    agreement::columns::AgreementIdentity, hasher::columns::HasherPrimaryKey,
+    user_profile::columns::UserProfileName,
 };
 use database_toolkit::DatabaseConnectionPool;
-use new_type::{EmailAddress, Password};
+use new_type::{EmailAddress, Hasher, Password};
 
 pub trait ServiceContract {
     async fn execute(&self) -> Result<(), ServiceError>;
@@ -27,6 +28,7 @@ pub enum ServiceError {
     EmailAddressAlreadyExists,
     NameAlreadyExists,
     InvalidAgreement,
+    PasswordHash,
     CreateBeforeSignup(CreateBeforeSignupError),
     SendEmail(SendEmailError),
 }
@@ -71,6 +73,13 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
         }
 
         let before_signup_id = {
+            let hasher = Hasher::Argon2;
+            let hasher_pk = HasherPrimaryKey::ARGON2;
+            let hash = self
+                .password
+                .hash(hasher)
+                .await
+                .map_err(|_| ServiceError::PasswordHash)?;
             let connection = self
                 .pool
                 .connection()
@@ -80,7 +89,8 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
                 .create_before_signup(
                     connection,
                     self.email_address.clone(),
-                    self.password.clone(),
+                    hasher_pk,
+                    hash,
                     self.name.clone(),
                     agreements,
                 )

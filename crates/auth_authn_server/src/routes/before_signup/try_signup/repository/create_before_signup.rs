@@ -5,17 +5,19 @@ use auth_database::{
         columns::{BeforeSignupIdentity, BeforeSignupPrimaryKey},
         BeforeSignup,
     },
+    hasher::columns::HasherPrimaryKey,
     user_profile::columns::UserProfileName,
 };
 use database_toolkit::{DatabaseConnection, QueryBuilder};
-use new_type::{EmailAddress, Password};
+use new_type::{EmailAddress, Hash};
 
 pub trait CreateBeforeSignupContract {
     async fn create_before_signup(
         &self,
         connection: DatabaseConnection,
         email_address: EmailAddress,
-        password: Password,
+        hasher_pk: HasherPrimaryKey,
+        hash: Hash,
         name: UserProfileName,
         agreements: Vec<AgreementPrimaryKey>,
     ) -> Result<BeforeSignupIdentity, CreateBeforeSignupError>;
@@ -32,7 +34,8 @@ impl CreateBeforeSignupContract for super::Repository {
         &self,
         mut connection: DatabaseConnection,
         email_address: EmailAddress,
-        password: Password,
+        hasher_pk: HasherPrimaryKey,
+        hash: Hash,
         name: UserProfileName,
         agreements: Vec<AgreementPrimaryKey>,
     ) -> Result<BeforeSignupIdentity, CreateBeforeSignupError> {
@@ -42,7 +45,8 @@ impl CreateBeforeSignupContract for super::Repository {
             before_signup_pk,
             before_signup_id,
             email_address,
-            password,
+            hasher_pk,
+            hash,
             name,
             agreements,
         )
@@ -59,24 +63,41 @@ fn query<'q>(
     before_signup_pk: BeforeSignupPrimaryKey,
     before_signup_id: BeforeSignupIdentity,
     email_address: EmailAddress,
-    password: Password,
+    hasher_pk: HasherPrimaryKey,
+    hash: Hash,
     name: UserProfileName,
     agreements: Vec<AgreementPrimaryKey>,
 ) -> QueryBuilder<'q> {
     #[derive(Serialize)]
     struct Payload {
-        email_address: EmailAddress,
-        password: Password,
-        name: UserProfileName,
+        credential: CredentialPayload,
+        hasher: HasherPayload,
+        profile: ProfilePayload,
         agreements: Vec<AgreementPrimaryKey>,
+    }
+
+    #[derive(Serialize)]
+    struct CredentialPayload {
+        email_address: EmailAddress,
+    }
+
+    #[derive(Serialize)]
+    struct HasherPayload {
+        hasher_pk: HasherPrimaryKey,
+        hash: Hash,
+    }
+
+    #[derive(Serialize)]
+    struct ProfilePayload {
+        name: UserProfileName,
     }
 
     let before_signup_pkp: Vec<u8> = before_signup_pk.into();
     let before_signup_id: Vec<u8> = before_signup_id.into();
     let payload = serde_json::to_string(&Payload {
-        email_address,
-        password,
-        name,
+        credential: CredentialPayload { email_address },
+        hasher: HasherPayload { hasher_pk, hash },
+        profile: ProfilePayload { name },
         agreements,
     })
     .map_err(CreateBeforeSignupError::Payload)

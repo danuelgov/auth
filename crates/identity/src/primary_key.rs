@@ -1,9 +1,12 @@
 use crate::{base58, uuid, Key, KeyError};
 use chrono::NaiveDateTime;
+use serde::Serialize;
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct PrimaryKey<T> {
     pub(crate) id: Key,
+    #[serde(skip)]
     _marker: std::marker::PhantomData<T>,
 }
 

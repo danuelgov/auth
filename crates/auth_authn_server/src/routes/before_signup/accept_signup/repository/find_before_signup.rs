@@ -5,10 +5,11 @@ use auth_database::{
         columns::{BeforeSignupIdentity, BeforeSignupPrimaryKey},
         BeforeSignup,
     },
+    hasher::columns::HasherPrimaryKey,
     user_profile::columns::UserProfileName,
 };
 use database_toolkit::{DatabaseConnection, QueryBuilder};
-use new_type::{EmailAddress, Password};
+use new_type::{EmailAddress, Hash};
 use sqlx::FromRow;
 
 pub trait FindBeforeSignupContract {
@@ -23,7 +24,8 @@ pub trait FindBeforeSignupContract {
 pub struct BeforeSignupData {
     pub before_signup_pk: BeforeSignupPrimaryKey,
     pub email_address: EmailAddress,
-    pub password: Password,
+    pub hasher_pk: HasherPrimaryKey,
+    pub hash: Hash,
     pub name: UserProfileName,
     pub agreements: Vec<AgreementPrimaryKey>,
 }
@@ -67,16 +69,32 @@ impl FindBeforeSignupContract for super::Repository {
 
                 #[derive(Deserialize)]
                 struct Payload {
-                    email_address: EmailAddress,
-                    password: Password,
-                    name: UserProfileName,
+                    credential: CredentialPayload,
+                    hasher: HasherPayload,
+                    profile: ProfilePayload,
                     agreements: Vec<AgreementPrimaryKey>,
                 }
 
+                #[derive(Deserialize)]
+                struct CredentialPayload {
+                    email_address: EmailAddress,
+                }
+
+                #[derive(Deserialize)]
+                struct HasherPayload {
+                    hasher_pk: HasherPrimaryKey,
+                    hash: Hash,
+                }
+
+                #[derive(Deserialize)]
+                struct ProfilePayload {
+                    name: UserProfileName,
+                }
+
                 let Payload {
-                    email_address,
-                    password,
-                    name,
+                    credential: CredentialPayload { email_address },
+                    hasher: HasherPayload { hasher_pk, hash },
+                    profile: ProfilePayload { name },
                     agreements,
                 } = serde_json::from_str(&row.payload).map_err(FindBeforeSignupError::Payload)?;
                 let before_signup_pk: BeforeSignupPrimaryKey = row
@@ -87,7 +105,8 @@ impl FindBeforeSignupContract for super::Repository {
                 Ok(BeforeSignupData {
                     before_signup_pk,
                     email_address,
-                    password,
+                    hasher_pk,
+                    hash,
                     name,
                     agreements,
                 })

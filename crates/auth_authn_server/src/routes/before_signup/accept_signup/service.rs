@@ -14,7 +14,7 @@ use auth_database::{
     user_credential::columns::UserCredentialPrimaryKey,
 };
 use database_toolkit::DatabaseConnectionPool;
-use new_type::{Handle, Salt};
+use new_type::Handle;
 
 pub trait ServiceContract {
     async fn execute(&self) -> Result<(), ServiceError>;
@@ -52,7 +52,8 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
         let BeforeSignupData {
             before_signup_pk,
             email_address,
-            password,
+            hasher_pk,
+            hash,
             name,
             agreements,
         } = {
@@ -75,9 +76,8 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
         invoke!(create_user(&mut transaction, user_pk, user_id) else CreateUser);
         invoke!(create_user_credential(&mut transaction, user_credential_pk, user_pk, email_address) else CreateUserCredential);
 
-        let salt = Salt::new();
         let expired_at = chrono::Utc::now() + chrono::Duration::days(90);
-        invoke!(create_user_credential_hasher(&mut transaction, user_credential_pk, password, salt, expired_at) else CreateUserCredentialHasher);
+        invoke!(create_user_credential_hasher(&mut transaction, user_credential_pk, hasher_pk, hash, expired_at) else CreateUserCredentialHasher);
 
         let handle = Handle::new();
         invoke!(create_user_profile(&mut transaction, user_pk, handle, name) else CreateUserProfile);

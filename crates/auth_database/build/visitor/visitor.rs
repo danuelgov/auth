@@ -65,10 +65,6 @@ pub trait Visitor: Sized {
         Ok(())
     }
 
-    fn visit_salt_type(&mut self, name: &ColumnName) -> Result<(), std::io::Error> {
-        Ok(())
-    }
-
     fn visit_json_type(&mut self, name: &ColumnName) -> Result<(), std::io::Error> {
         Ok(())
     }
@@ -131,7 +127,6 @@ pub fn visit_column<V: Visitor>(
         Column::DateTime => visitor.visit_date_time_type(name),
         Column::Handle => visitor.visit_handle_type(name),
         Column::Hash => visitor.visit_hash_type(name),
-        Column::Salt => visitor.visit_salt_type(name),
         Column::Json => visitor.visit_json_type(name),
         Column::Image => visitor.visit_image_type(name),
         Column::IpAddr => visitor.visit_ip_addr_type(name),

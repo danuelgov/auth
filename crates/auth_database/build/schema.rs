@@ -31,7 +31,6 @@ pub enum Column {
     DateTime,
     Handle,
     Hash,
-    Salt,
     Json,
     Image,
     IpAddr,

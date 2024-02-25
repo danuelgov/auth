@@ -2,9 +2,11 @@ use chrono::NaiveDateTime;
 use identity::Prefix;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct PrimaryKey<T>(identity::PrimaryKey<T>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct Identity<P: Prefix>(identity::Identity<P>);
 
 impl<T> std::ops::Deref for PrimaryKey<T> {

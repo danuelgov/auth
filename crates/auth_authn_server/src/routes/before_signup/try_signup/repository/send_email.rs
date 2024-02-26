@@ -23,6 +23,7 @@ impl SendEmailContract for super::Repository {
         dbg!(email_address, before_signup_id);
 
         // TODO: 이메일 전송 연동
+        // Tracking Issue: https://github.com/danuelgov/auth/issues/4
 
         Ok(())
     }

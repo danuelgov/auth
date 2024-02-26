@@ -172,4 +172,12 @@ mod tests {
             println!("{:#?}", id);
         }
     }
+
+    #[ignore]
+    #[test]
+    fn hex_to_base58() {
+        let hex = 0x681049B6D1CC453BA880BC8411216FFF;
+        let primary_key = unsafe { CredentialPrimaryKey::new_unchecked(hex) };
+        dbg!(primary_key);
+    }
 }

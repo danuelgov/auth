@@ -77,6 +77,16 @@ impl<P: Prefix> TryFrom<Vec<u8>> for Identity<P> {
         Ok(Self(value.try_into()?))
     }
 }
+
+impl<P: Prefix> std::str::FromStr for Identity<P> {
+    type Err = identity::PrefixKeyError;
+
+    #[inline]
+    fn from_str(source: &str) -> Result<Self, Self::Err> {
+        Ok(Self(source.parse()?))
+    }
+}
+
 impl<T> PrimaryKey<T> {
     #[inline]
     pub fn new() -> Self {

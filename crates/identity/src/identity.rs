@@ -40,6 +40,14 @@ impl<P: Prefix> TryFrom<Vec<u8>> for Identity<P> {
     }
 }
 
+impl<P: Prefix> std::str::FromStr for Identity<P> {
+    type Err = PrefixKeyError;
+
+    fn from_str(source: &str) -> Result<Self, Self::Err> {
+        Ok(Self(source.parse()?))
+    }
+}
+
 impl<P: Prefix> Identity<P> {
     #[inline]
     pub fn new() -> Self {
@@ -126,5 +134,13 @@ mod tests {
 
             println!("{:#?}", id);
         }
+    }
+
+    #[ignore]
+    #[test]
+    fn hex_to_base58() {
+        let hex = 0x681049B6D1CC453BA880BC8411216FFF;
+        let identity = unsafe { OrderIdentity::new_unchecked(hex) };
+        dbg!(identity);
     }
 }

@@ -787,8 +787,11 @@ version = "0.1.0"
 dependencies = [
  "auth_database",
  "chrono",
+ "database_toolkit",
  "new_type",
  "rocket",
+ "serde",
+ "sqlx",
  "tokio",
 ]
 

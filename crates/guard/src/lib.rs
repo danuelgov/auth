@@ -3,6 +3,12 @@
 #[macro_use]
 extern crate rocket;
 
+#[macro_use]
+extern crate sqlx;
+
+#[macro_use]
+extern crate serde;
+
 mod data_guard;
 mod fairing;
 mod request_guard;

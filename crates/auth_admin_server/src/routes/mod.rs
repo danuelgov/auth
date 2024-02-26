@@ -1,9 +1,9 @@
-mod user;
+mod users;
 
 use rocket::{Build, Rocket};
 
 pub fn routes(rocket: Rocket<Build>) -> Rocket<Build> {
-    let rocket = user::routes(rocket);
+    let rocket = users::routes(rocket);
 
     rocket
 }

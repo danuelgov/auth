@@ -144,6 +144,7 @@ name = "auth_admin_server"
 version = "0.1.0"
 dependencies = [
  "auth_database",
+ "chrono",
  "database_toolkit",
  "dotenvy",
  "guard",
@@ -151,6 +152,8 @@ dependencies = [
  "new_type",
  "rocket",
  "serde",
+ "serde_json",
+ "sqlx",
  "tokio",
 ]
 
@@ -159,6 +162,7 @@ name = "auth_api_server"
 version = "0.1.0"
 dependencies = [
  "auth_database",
+ "chrono",
  "database_toolkit",
  "dotenvy",
  "guard",
@@ -166,6 +170,8 @@ dependencies = [
  "new_type",
  "rocket",
  "serde",
+ "serde_json",
+ "sqlx",
  "tokio",
 ]
 
@@ -192,6 +198,7 @@ name = "auth_console_server"
 version = "0.1.0"
 dependencies = [
  "auth_database",
+ "chrono",
  "database_toolkit",
  "dotenvy",
  "guard",
@@ -199,6 +206,8 @@ dependencies = [
  "new_type",
  "rocket",
  "serde",
+ "serde_json",
+ "sqlx",
  "tokio",
 ]
 

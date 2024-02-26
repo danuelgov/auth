@@ -2,7 +2,7 @@ mod repository;
 mod response;
 mod service;
 
-use auth_database::user::columns::UserPrimaryKey;
+use auth_database::{user::columns::UserPrimaryKey, user_session::columns::UserSessionPrimaryKey};
 use database_toolkit::DatabaseConnectionPool;
 use guard::Session;
 use repository::*;
@@ -15,7 +15,12 @@ pub async fn handler(
     session: Session,
     pool: &State<DatabaseConnectionPool>,
 ) -> Result<Response, Status> {
-    let service = service(pool.inner().clone(), Repository, session.user_pk);
+    let service = service(
+        pool.inner().clone(),
+        Repository,
+        session.user_pk,
+        session.user_session_pk,
+    );
     match service.execute().await {
         Ok(response) => Ok(Response {
             body: Json(Body {
@@ -35,10 +40,12 @@ fn service(
     pool: DatabaseConnectionPool,
     repository: Repository,
     user_pk: UserPrimaryKey,
+    user_session_pk: UserSessionPrimaryKey,
 ) -> Service<Repository> {
     Service {
         pool,
         repository,
         user_pk,
+        user_session_pk,
     }
 }

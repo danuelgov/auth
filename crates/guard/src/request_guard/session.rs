@@ -1,7 +1,11 @@
 use crate::{Authorization, Bearer, Header};
 use auth_database::{
     user::{self, columns::UserPrimaryKey},
-    user_session::{self, columns::UserSessionIdentity, UserSession},
+    user_session::{
+        self,
+        columns::{UserSessionIdentity, UserSessionPrimaryKey},
+        UserSession,
+    },
 };
 use database_toolkit::{DatabaseConnectionPool, QueryBuilder};
 use rocket::{
@@ -14,6 +18,7 @@ use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct Session {
+    pub user_session_pk: UserSessionPrimaryKey,
     pub user_pk: UserPrimaryKey,
 }
 
@@ -27,7 +32,7 @@ impl<'r> FromRequest<'r> for Session {
         else {
             return Outcome::Forward(Status::Unauthorized);
         };
-        let Ok(session_id) = UserSessionIdentity::from_str(authorization.as_str()) else {
+        let Ok(user_session_id) = UserSessionIdentity::from_str(authorization.as_str()) else {
             return Outcome::Forward(Status::Unauthorized);
         };
         let Outcome::Success(pool) = request.guard::<&State<DatabaseConnectionPool>>().await else {
@@ -36,17 +41,23 @@ impl<'r> FromRequest<'r> for Session {
         let Ok(mut connection) = pool.connection().await else {
             return Outcome::Error((Status::InternalServerError, ()));
         };
-        let Ok(row) = query(session_id).build().fetch_one(&mut *connection).await else {
+        let Ok(row) = query(user_session_id)
+            .build()
+            .fetch_one(&mut *connection)
+            .await
+        else {
             return Outcome::Forward(Status::Unauthorized);
         };
 
         #[derive(FromRow)]
         struct Row {
+            user_session_pk: Vec<u8>,
             user_pk: Vec<u8>,
             expired_at: chrono::DateTime<chrono::Utc>,
         }
 
         let Ok(Row {
+            user_session_pk,
             user_pk,
             expired_at,
         }) = Row::from_row(&row)
@@ -57,11 +68,17 @@ impl<'r> FromRequest<'r> for Session {
         if expired_at < now {
             return Outcome::Forward(Status::Unauthorized);
         }
+        let Ok(user_session_pk) = UserSessionPrimaryKey::try_from(user_session_pk) else {
+            return Outcome::Error((Status::InternalServerError, ()));
+        };
         let Ok(user_pk) = UserPrimaryKey::try_from(user_pk) else {
             return Outcome::Error((Status::InternalServerError, ()));
         };
 
-        Outcome::Success(Session { user_pk })
+        Outcome::Success(Session {
+            user_session_pk,
+            user_pk,
+        })
     }
 }
 
@@ -69,6 +86,7 @@ fn query<'q>(session_id: UserSessionIdentity) -> QueryBuilder<'q> {
     QueryBuilder::new()
         .select(UserSession, |builder| {
             builder.columns(&[
+                user_session::columns::USER_SESSION_PK,
                 user_session::columns::USER_PK,
                 user_session::columns::EXPIRED_AT,
             ])

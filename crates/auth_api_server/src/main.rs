@@ -7,13 +7,16 @@ extern crate serde;
 mod routes;
 mod states;
 
-use rocket::Rocket;
+use rocket::{Config, Rocket};
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenvy::dotenv()?;
 
-    let rocket = Rocket::build();
+    let rocket = Rocket::custom(Config {
+        port: 8001,
+        ..Default::default()
+    });
     let rocket = states::manage(rocket).await?;
     let rocket = routes::routes(rocket);
     rocket.launch().await?;

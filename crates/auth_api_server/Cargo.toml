@@ -5,12 +5,14 @@ edition = "2021"
 
 [dependencies]
 auth_database = { path = "../auth_database" }
+auth_internal = { path = "../auth_internal" }
 chrono = { version = "0.4.33", features = ["now", "serde"] }
 database_toolkit = { path = "../database_toolkit" }
 dotenvy = "0.15.7"
 guard = { path = "../guard" }
 identity = { path = "../identity" }
 new_type = { path = "../new_type" }
+reqwest = { version = "0.11.24", features = ["json"] }
 rocket = { version = "0.5.0", features = ["json"] }
 serde = { version = "1.0.196", features = ["derive"] }
 serde_json = "1.0.113"

@@ -20,6 +20,7 @@ use std::str::FromStr;
 pub struct Session {
     pub user_session_pk: UserSessionPrimaryKey,
     pub user_pk: UserPrimaryKey,
+    pub raw: String,
 }
 
 #[rocket::async_trait]
@@ -32,7 +33,8 @@ impl<'r> FromRequest<'r> for Session {
         else {
             return Outcome::Forward(Status::Unauthorized);
         };
-        let Ok(user_session_id) = UserSessionIdentity::from_str(authorization.as_str()) else {
+        let Ok(user_session_id) = UserSessionIdentity::from_str(authorization.value().as_str())
+        else {
             return Outcome::Forward(Status::Unauthorized);
         };
         let Outcome::Success(pool) = request.guard::<&State<DatabaseConnectionPool>>().await else {
@@ -78,6 +80,7 @@ impl<'r> FromRequest<'r> for Session {
         Outcome::Success(Session {
             user_session_pk,
             user_pk,
+            raw: authorization.raw().to_owned(),
         })
     }
 }

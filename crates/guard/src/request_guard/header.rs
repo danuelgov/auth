@@ -18,14 +18,17 @@ pub trait HeaderName: Sized + Send {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Header<T>(T);
+pub struct Header<T> {
+    value: T,
+    raw: String,
+}
 
 impl<T> std::ops::Deref for Header<T> {
     type Target = T;
 
     #[inline]
     fn deref(&self) -> &T {
-        &self.0
+        &self.value
     }
 }
 
@@ -51,14 +54,29 @@ where
     type Error = ();
 
     fn try_from(headers: &HeaderMap<'_>) -> Result<Self, Self::Error> {
-        let Some(header) = headers.get(T::NAME).last() else {
+        let Some(raw) = headers.get(T::NAME).last() else {
             return Err(());
         };
-        let Ok(header) = T::from_str(&header) else {
+        let Ok(value) = T::from_str(&raw) else {
             return Err(());
         };
 
-        Ok(Header(header))
+        Ok(Header {
+            value,
+            raw: raw.to_owned(),
+        })
+    }
+}
+
+impl<T> Header<T> {
+    #[inline]
+    pub fn value(&self) -> &T {
+        &self.value
+    }
+
+    #[inline]
+    pub fn raw(&self) -> &str {
+        &self.raw
     }
 }
 
@@ -96,9 +114,12 @@ mod tests {
 
         assert_eq!(
             header,
-            Ok(super::Header(CustomHeader {
-                value: "value".to_string()
-            }))
+            Ok(super::Header {
+                value: CustomHeader {
+                    value: "value".to_string()
+                },
+                raw: "value".to_string()
+            })
         );
     }
 }

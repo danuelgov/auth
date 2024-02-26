@@ -1,51 +1,40 @@
-mod repository;
-mod response;
-mod service;
-
-use auth_database::{user::columns::UserPrimaryKey, user_session::columns::UserSessionPrimaryKey};
-use database_toolkit::DatabaseConnectionPool;
+use auth_internal::AUTH_AUTHN_SERVER_HOST;
 use guard::Session;
-use repository::*;
-use response::*;
-use rocket::{http::Status, serde::json::Json, State};
-use service::*;
+use rocket::{http::Status, serde::json::Json};
 
 #[get("/users/me")]
-pub async fn handler(
-    session: Session,
-    pool: &State<DatabaseConnectionPool>,
-) -> Result<Response, Status> {
-    let service = service(
-        pool.inner().clone(),
-        Repository,
-        session.user_pk,
-        session.user_session_pk,
-    );
-    match service.execute().await {
-        Ok(response) => Ok(Response {
-            body: Json(Body {
-                user: User {
-                    handle: response.user.handle,
-                    name: response.user.name,
-                    bio: response.user.bio,
-                    image: response.user.image,
-                },
-            }),
-        }),
-        _ => Err(Status::InternalServerError),
-    }
+pub async fn handler(session: Session) -> Result<Response, Status> {
+    let response = reqwest::Client::new()
+        .get(format!(
+            "{}/internal/authn/users/me",
+            AUTH_AUTHN_SERVER_HOST
+        ))
+        .header("Authorization", session.raw)
+        .send()
+        .await
+        .map_err(|_| Status::InternalServerError)?;
+    let body: Body = response
+        .json()
+        .await
+        .map_err(|_| Status::InternalServerError)?;
+
+    Ok(Response { body: Json(body) })
 }
 
-fn service(
-    pool: DatabaseConnectionPool,
-    repository: Repository,
-    user_pk: UserPrimaryKey,
-    user_session_pk: UserSessionPrimaryKey,
-) -> Service<Repository> {
-    Service {
-        pool,
-        repository,
-        user_pk,
-        user_session_pk,
-    }
+#[derive(Responder)]
+pub struct Response {
+    pub body: Json<Body>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Body {
+    pub user: User,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct User {
+    pub handle: String,
+    pub name: String,
+    pub bio: String,
+    pub image: String,
 }

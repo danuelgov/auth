@@ -201,6 +201,7 @@ impl<'build> Visitor for ColumnTypeVisitor<'build> {
         writeln!(self.file, "                Self(source.and_utc())")?;
         writeln!(self.file, "            }}")?;
         writeln!(self.file, "        }}")?;
+        writeln!(self.file)?;
         writeln!(
             self.file,
             "        impl std::ops::Deref for {}{} {{",

@@ -330,6 +330,7 @@ pub mod before_new_password {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for BeforeNewPasswordCompletedAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -356,6 +357,7 @@ pub mod before_new_password {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for BeforeNewPasswordExpiredAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -426,6 +428,7 @@ pub mod before_signup {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for BeforeSignupCompletedAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -452,6 +455,7 @@ pub mod before_signup {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for BeforeSignupExpiredAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -1068,6 +1072,7 @@ pub mod user {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for UserDeactivatedAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -1240,6 +1245,7 @@ pub mod user_agreement {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for UserAgreementExpiredAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -1381,6 +1387,7 @@ pub mod user_credential__has__hasher {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for UserCredentialHasHasherExpiredAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -1563,6 +1570,7 @@ pub mod user_group__has__permission {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for UserGroupHasPermissionCreatedAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -1630,6 +1638,7 @@ pub mod user_group__has__role {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for UserGroupHasRoleCreatedAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -1697,6 +1706,7 @@ pub mod user_group__has__user {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for UserGroupHasUserCreatedAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -1764,6 +1774,7 @@ pub mod user_permission {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for UserPermissionCreatedAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -2017,6 +2028,7 @@ pub mod user_role {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for UserRoleCreatedAt {
             type Target = chrono::DateTime<chrono::Utc>;
 
@@ -2086,6 +2098,7 @@ pub mod user_session {
                 Self(source.and_utc())
             }
         }
+
         impl std::ops::Deref for UserSessionExpiredAt {
             type Target = chrono::DateTime<chrono::Utc>;
 

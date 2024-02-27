@@ -33,7 +33,18 @@ where
     const NAME: &'static str = "Authorization";
 }
 
+impl Credential for String {
+    //
+}
+
 impl Authorization<Bearer> {
+    #[inline]
+    pub fn as_str(&self) -> &str {
+        self.as_ref()
+    }
+}
+
+impl Authorization<String> {
     #[inline]
     pub fn as_str(&self) -> &str {
         self.as_ref()

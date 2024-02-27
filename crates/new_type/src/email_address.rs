@@ -5,7 +5,7 @@ pub struct EmailAddress(dep_email_address::EmailAddress);
 
 impl std::fmt::Display for EmailAddress {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self.as_str())
+        write!(f, "{}", self.as_str())
     }
 }
 

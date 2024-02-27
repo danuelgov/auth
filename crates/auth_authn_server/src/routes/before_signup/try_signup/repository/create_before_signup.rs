@@ -49,7 +49,7 @@ impl CreateBeforeSignupContract for super::Repository {
             hash,
             name,
             agreements,
-        )
+        )?
         .build()
         .execute(&mut *connection)
         .await
@@ -67,7 +67,7 @@ fn query<'q>(
     hash: Hash,
     name: UserProfileName,
     agreements: Vec<AgreementPrimaryKey>,
-) -> QueryBuilder<'q> {
+) -> Result<QueryBuilder<'q>, CreateBeforeSignupError> {
     #[derive(Serialize)]
     struct Payload {
         credential: CredentialPayload,
@@ -100,12 +100,11 @@ fn query<'q>(
         profile: ProfilePayload { name },
         agreements,
     })
-    .map_err(CreateBeforeSignupError::Payload)
-    .unwrap();
+    .map_err(CreateBeforeSignupError::Payload)?;
     let now = chrono::Utc::now().naive_utc();
     let expired_at = now + chrono::Duration::days(1);
 
-    QueryBuilder::new()
+    let query_builder = QueryBuilder::new()
         .insert_into(
             BeforeSignup,
             &[
@@ -126,5 +125,7 @@ fn query<'q>(
                     .comma()
                     .value(expired_at)
             })
-        })
+        });
+
+    Ok(query_builder)
 }

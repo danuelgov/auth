@@ -1,15 +1,15 @@
 use auth_internal::AUTH_AUTHN_SERVER_HOST;
-use guard::Session;
+use guard::{Authorization, Header};
 use rocket::{http::Status, serde::json::Json};
 
 #[get("/users/me")]
-pub async fn handler(session: Session) -> Result<Response, Status> {
+pub async fn handler(authorization: Header<Authorization<String>>) -> Result<Response, Status> {
     let response = reqwest::Client::new()
         .get(format!(
             "{}/internal/authn/users/me",
             AUTH_AUTHN_SERVER_HOST
         ))
-        .header("Authorization", session.raw)
+        .header("Authorization", authorization.as_str())
         .send()
         .await
         .map_err(|_| Status::InternalServerError)?;

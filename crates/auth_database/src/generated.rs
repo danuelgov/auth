@@ -296,12 +296,13 @@ pub mod before_new_password {
 
     pub type Column = database_toolkit::Column<BeforeNewPassword>;
 
-    pub const ALL_COLUMNS: [Column; 5] = [
+    pub const ALL_COLUMNS: [Column; 6] = [
         columns::BEFORE_NEW_PASSWORD_PK,
         columns::COMPLETED_AT,
         columns::EXPIRED_AT,
         columns::ID,
         columns::PAYLOAD,
+        columns::USER_CREDENTIAL_PK,
     ];
 
     pub mod columns {
@@ -310,6 +311,7 @@ pub mod before_new_password {
         pub const EXPIRED_AT: super::Column = super::Column::new("expired_at");
         pub const ID: super::Column = super::Column::new("id");
         pub const PAYLOAD: super::Column = super::Column::new("payload");
+        pub const USER_CREDENTIAL_PK: super::Column = super::Column::new("user_credential_pk");
 
         pub type BeforeNewPasswordPrimaryKey = crate::generated::before_new_password::PrimaryKey;
 
@@ -371,6 +373,8 @@ pub mod before_new_password {
 
         #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
         pub struct BeforeNewPasswordJson<T>(T);
+
+        pub type UserCredentialPrimaryKey = crate::generated::user_credential::PrimaryKey;
     }
 }
 

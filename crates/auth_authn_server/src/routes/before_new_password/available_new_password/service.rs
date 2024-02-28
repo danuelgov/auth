@@ -1,12 +1,9 @@
-use super::{
-    exists_before_new_password_id::{Existence, ExistsBeforeNewPasswordIdError},
-    RepositoryContract,
-};
+use super::{exists_before_new_password_id::ExistsBeforeNewPasswordIdError, RepositoryContract};
 use auth_database::before_new_password::columns::BeforeNewPasswordIdentity;
 use database_toolkit::DatabaseConnectionPool;
 
 pub trait ServiceContract {
-    async fn execute(&self) -> Result<Existence, ServiceError>;
+    async fn execute(&self) -> Result<(), ServiceError>;
 }
 
 #[derive(Debug)]
@@ -22,7 +19,7 @@ pub struct Service<Repository: RepositoryContract> {
 }
 
 impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
-    async fn execute(&self) -> Result<Existence, ServiceError> {
+    async fn execute(&self) -> Result<(), ServiceError> {
         macro_rules! connection {
             () => {{
                 self.pool
@@ -32,12 +29,12 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
             }};
         }
 
-        let exists = self
-            .repository
-            .exists_before_new_password_id(connection!(), self.before_new_password_id)
+        let now = chrono::Utc::now();
+        self.repository
+            .exists_before_new_password_id(connection!(), self.before_new_password_id, now)
             .await
             .map_err(ServiceError::ExistsBeforeNewPasswordId)?;
 
-        Ok(exists)
+        Ok(())
     }
 }

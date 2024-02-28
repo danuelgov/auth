@@ -1,7 +1,7 @@
 mod repository;
 mod service;
 
-use self::exists_before_new_password_id::Existence;
+use self::exists_before_new_password_id::ExistsBeforeNewPasswordIdError;
 use auth_database::before_new_password::columns::BeforeNewPasswordIdentity;
 use database_toolkit::DatabaseConnectionPool;
 use repository::*;
@@ -17,8 +17,16 @@ pub async fn handler(pool: &State<DatabaseConnectionPool>, id: String) -> Result
 
     let service = service(pool.inner().clone(), Repository, before_new_password_id);
     match service.execute().await {
-        Ok(Existence::Yes) => Ok(Status::Ok),
-        Ok(Existence::No) => Ok(Status::NotFound),
+        Ok(_) => Ok(Status::NoContent),
+        Err(ServiceError::ExistsBeforeNewPasswordId(ExistsBeforeNewPasswordIdError::Used)) => {
+            Ok(Status::Gone)
+        }
+        Err(ServiceError::ExistsBeforeNewPasswordId(ExistsBeforeNewPasswordIdError::Expired)) => {
+            Ok(Status::Gone)
+        }
+        Err(ServiceError::ExistsBeforeNewPasswordId(ExistsBeforeNewPasswordIdError::NotFound)) => {
+            Err(Status::NotFound)
+        }
         _ => Err(Status::InternalServerError),
     }
 }

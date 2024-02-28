@@ -12,6 +12,7 @@ use auth_database::{
     before_signup::columns::BeforeSignupIdentity,
     user::columns::{UserIdentity, UserPrimaryKey},
     user_credential::columns::UserCredentialPrimaryKey,
+    user_credential__has__hasher::columns::UserCredentialHasHasherPrimaryKey,
 };
 use database_toolkit::DatabaseConnectionPool;
 use new_type::Handle;
@@ -76,8 +77,9 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
         invoke!(create_user(&mut transaction, user_pk, user_id) else CreateUser);
         invoke!(create_user_credential(&mut transaction, user_credential_pk, user_pk, email_address) else CreateUserCredential);
 
+        let user_credential__has__hasher_pk = UserCredentialHasHasherPrimaryKey::new();
         let expired_at = chrono::Utc::now() + chrono::Duration::days(90);
-        invoke!(create_user_credential_hasher(&mut transaction, user_credential_pk, hasher_pk, hash, expired_at) else CreateUserCredentialHasher);
+        invoke!(create_user_credential_hasher(&mut transaction, user_credential__has__hasher_pk, user_credential_pk, hasher_pk, hash, expired_at) else CreateUserCredentialHasher);
 
         let handle = Handle::new();
         invoke!(create_user_profile(&mut transaction, user_pk, handle, name) else CreateUserProfile);

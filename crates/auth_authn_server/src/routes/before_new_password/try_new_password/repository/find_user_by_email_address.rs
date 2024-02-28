@@ -61,7 +61,6 @@ fn query<'q>(email_address: EmailAddress) -> QueryBuilder<'q> {
         .where_(|builder| {
             builder.condition(|builder| {
                 let email_address: String = email_address.to_string();
-                dbg!(&email_address);
 
                 builder
                     .column(user_credential::columns::EXTERNAL_ID)

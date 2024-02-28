@@ -1,6 +1,7 @@
 use auth_database::before_new_password::{
     self, columns::BeforeNewPasswordIdentity, BeforeNewPassword,
 };
+use chrono::{DateTime, Utc};
 use database_toolkit::{DatabaseConnection, QueryBuilder};
 use sqlx::FromRow;
 
@@ -9,19 +10,17 @@ pub trait ExistsBeforeNewPasswordIdContract {
         &self,
         connection: DatabaseConnection,
         before_new_password_id: BeforeNewPasswordIdentity,
-    ) -> Result<Existence, ExistsBeforeNewPasswordIdError>;
-}
-
-pub enum Existence {
-    Yes,
-    No,
+        now: DateTime<Utc>,
+    ) -> Result<(), ExistsBeforeNewPasswordIdError>;
 }
 
 #[derive(Debug)]
 pub enum ExistsBeforeNewPasswordIdError {
     Database(sqlx::Error),
     Row(sqlx::Error),
-    Unknown,
+    Used,
+    Expired,
+    NotFound,
 }
 
 impl ExistsBeforeNewPasswordIdContract for super::Repository {
@@ -29,24 +28,25 @@ impl ExistsBeforeNewPasswordIdContract for super::Repository {
         &self,
         mut connection: DatabaseConnection,
         before_new_password_id: BeforeNewPasswordIdentity,
-    ) -> Result<Existence, ExistsBeforeNewPasswordIdError> {
+        now: DateTime<Utc>,
+    ) -> Result<(), ExistsBeforeNewPasswordIdError> {
         let row = query(before_new_password_id)
             .build()
-            .fetch_one(&mut *connection)
+            .fetch_optional(&mut *connection)
             .await
-            .map_err(ExistsBeforeNewPasswordIdError::Database)?;
+            .map_err(ExistsBeforeNewPasswordIdError::Database)?
+            .ok_or(ExistsBeforeNewPasswordIdError::NotFound)?;
 
         #[derive(FromRow)]
         struct Row {
-            count: i8,
+            expired_at: DateTime<Utc>,
+            completed_at: DateTime<Utc>,
         }
 
-        let Row { count } = Row::from_row(&row).map_err(ExistsBeforeNewPasswordIdError::Row)?;
-
-        match count {
-            0 => Ok(Existence::No),
-            1 => Ok(Existence::Yes),
-            _ => Err(ExistsBeforeNewPasswordIdError::Unknown),
+        match Row::from_row(&row).map_err(ExistsBeforeNewPasswordIdError::Row)? {
+            row if row.completed_at < now => Err(ExistsBeforeNewPasswordIdError::Used),
+            row if row.expired_at < now => Err(ExistsBeforeNewPasswordIdError::Expired),
+            _ => Ok(()),
         }
     }
 }
@@ -54,7 +54,10 @@ impl ExistsBeforeNewPasswordIdContract for super::Repository {
 fn query<'q>(before_new_password_id: BeforeNewPasswordIdentity) -> QueryBuilder<'q> {
     QueryBuilder::new()
         .select(BeforeNewPassword, |builder| {
-            builder.write("COUNT(*)").alias("count")
+            builder.columns(&[
+                before_new_password::columns::EXPIRED_AT,
+                before_new_password::columns::COMPLETED_AT,
+            ])
         })
         .where_(|builder| {
             builder.condition(|builder| {

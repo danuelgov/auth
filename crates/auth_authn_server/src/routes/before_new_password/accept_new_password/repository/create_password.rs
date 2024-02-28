@@ -5,36 +5,37 @@ use auth_database::{
         self, columns::UserCredentialHasHasherPrimaryKey, UserCredentialHasHasher,
     },
 };
+use chrono::{DateTime, Utc};
 use database_toolkit::{QueryBuilder, Transaction};
 use new_type::Hash;
 
-pub trait CreateUserCredentialHasherContract {
-    async fn create_user_credential_hasher(
+pub trait CreatePasswordContract {
+    async fn create_password(
         &self,
         transaction: &mut Transaction,
         user_credential__has__hasher_pk: UserCredentialHasHasherPrimaryKey,
         user_credential_pk: UserCredentialPrimaryKey,
         hasher_pk: HasherPrimaryKey,
         hash: Hash,
-        expired_at: chrono::DateTime<chrono::Utc>,
-    ) -> Result<(), CreateUserCredentialHasherError>;
+        expired_at: DateTime<Utc>,
+    ) -> Result<(), CreatePasswordError>;
 }
 
 #[derive(Debug)]
-pub enum CreateUserCredentialHasherError {
+pub enum CreatePasswordError {
     Database(sqlx::Error),
 }
 
-impl CreateUserCredentialHasherContract for super::Repository {
-    async fn create_user_credential_hasher(
+impl CreatePasswordContract for super::Repository {
+    async fn create_password(
         &self,
         transaction: &mut Transaction,
         user_credential__has__hasher_pk: UserCredentialHasHasherPrimaryKey,
         user_credential_pk: UserCredentialPrimaryKey,
         hasher_pk: HasherPrimaryKey,
         hash: Hash,
-        expired_at: chrono::DateTime<chrono::Utc>,
-    ) -> Result<(), CreateUserCredentialHasherError> {
+        expired_at: DateTime<Utc>,
+    ) -> Result<(), CreatePasswordError> {
         query(
             user_credential__has__hasher_pk,
             user_credential_pk,
@@ -45,19 +46,19 @@ impl CreateUserCredentialHasherContract for super::Repository {
         .build()
         .execute(&mut **transaction)
         .await
-        .map_err(CreateUserCredentialHasherError::Database)?;
+        .map_err(CreatePasswordError::Database)?;
 
         Ok(())
     }
 }
 
-fn query<'args>(
+fn query<'q>(
     user_credential__has__hasher_pk: UserCredentialHasHasherPrimaryKey,
     user_credential_pk: UserCredentialPrimaryKey,
     hasher_pk: HasherPrimaryKey,
     hash: Hash,
-    expired_at: chrono::DateTime<chrono::Utc>,
-) -> QueryBuilder<'args> {
+    expired_at: DateTime<Utc>,
+) -> QueryBuilder<'q> {
     QueryBuilder::new()
         .insert_into(
             UserCredentialHasHasher,
@@ -71,12 +72,11 @@ fn query<'args>(
         )
         .values(|builder| {
             builder.nested(|builder| {
-                let user_credential__has__hasher_pk: Vec<u8> =
+                let user_credential__has__hasher_pk: Vec<_> =
                     user_credential__has__hasher_pk.into();
-                let user_credential_pk: Vec<u8> = user_credential_pk.into();
-                let hasher_pk: Vec<u8> = hasher_pk.into();
+                let user_credential_pk: Vec<_> = user_credential_pk.into();
+                let hasher_pk: Vec<_> = hasher_pk.into();
                 let hash = hash.as_str().to_owned();
-                let expired_at = expired_at;
 
                 builder
                     .value(user_credential__has__hasher_pk)

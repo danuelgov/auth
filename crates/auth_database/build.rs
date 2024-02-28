@@ -11,6 +11,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     writeln!(generated, r#"// ! Do not modify it manually."#)?;
     writeln!(generated, r#"// ! Regenerate it by running `cargo build`."#)?;
     writeln!(generated, r#"// !"#)?;
+    writeln!(generated)?;
+    writeln!(generated, "#![allow(non_upper_case_globals)]")?;
 
     let mut paths: Vec<_> = std::fs::read_dir("schema")?
         .filter_map(|entry| entry.ok().map(|entry| entry.path()))

@@ -4,6 +4,8 @@
 // ! Regenerate it by running `cargo build`.
 // !
 
+#![allow(non_upper_case_globals)]
+
 pub mod activity {
     use database_toolkit::Table;
 
@@ -1356,10 +1358,11 @@ pub mod user_credential__has__hasher {
 
     pub type Column = database_toolkit::Column<UserCredentialHasHasher>;
 
-    pub const ALL_COLUMNS: [Column; 4] = [
+    pub const ALL_COLUMNS: [Column; 5] = [
         columns::EXPIRED_AT,
         columns::HASH,
         columns::HASHER_PK,
+        columns::USER_CREDENTIAL__HAS__HASHER_PK,
         columns::USER_CREDENTIAL_PK,
     ];
 
@@ -1367,6 +1370,7 @@ pub mod user_credential__has__hasher {
         pub const EXPIRED_AT: super::Column = super::Column::new("expired_at");
         pub const HASH: super::Column = super::Column::new("hash");
         pub const HASHER_PK: super::Column = super::Column::new("hasher_pk");
+        pub const USER_CREDENTIAL__HAS__HASHER_PK: super::Column = super::Column::new("user_credential__has__hasher_pk");
         pub const USER_CREDENTIAL_PK: super::Column = super::Column::new("user_credential_pk");
 
         #[derive(Serialize, Deserialize)]
@@ -1428,6 +1432,8 @@ pub mod user_credential__has__hasher {
         }
 
         pub type HasherPrimaryKey = crate::generated::hasher::PrimaryKey;
+
+        pub type UserCredentialHasHasherPrimaryKey = crate::generated::user_credential__has__hasher::PrimaryKey;
 
         pub type UserCredentialPrimaryKey = crate::generated::user_credential::PrimaryKey;
     }

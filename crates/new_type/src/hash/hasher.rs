@@ -1,8 +1,8 @@
 use crate::Hash;
 use serde::{Deserialize, Serialize};
 
-const ARGON2: &'static str = "Argon2";
-const BCRYPT: &'static str = "Bcrypt";
+const ARGON2: &'static str = "argon2";
+const BCRYPT: &'static str = "bcrypt";
 
 #[derive(Debug, Clone, Copy)]
 pub enum Hasher {

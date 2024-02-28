@@ -15,7 +15,6 @@ CREATE TABLE
     `before_new_password_pk` BINARY(16),
     `id` BINARY(16) NOT NULL,
     `user_credential_pk` BINARY(16) NOT NULL,
-    `payload` TEXT NOT NULL,
     `expired_at` DATETIME NOT NULL,
     `completed_at` DATETIME NOT NULL DEFAULT '9999-12-31 23:59:59',
     PRIMARY KEY (`before_new_password_pk`)

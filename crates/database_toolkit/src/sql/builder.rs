@@ -113,11 +113,11 @@ impl<'args> QueryBuilder<'args> {
     }
 
     #[inline]
-    pub fn order_by<T>(self, column: Column<T>) -> Self
+    pub fn order_by<F>(self, f: F) -> Self
     where
-        T: Table,
+        F: FnOnce(Self) -> Self,
     {
-        self.write("ORDER BY").column(column)
+        self.write("ORDER BY").f(f)
     }
 
     #[inline]
@@ -218,6 +218,14 @@ impl<'args> QueryBuilder<'args> {
         for<'q> V: 'q + Send + Encode<'q, MySql> + Type<MySql>,
     {
         self.column(column).eq().value(value)
+    }
+
+    #[inline]
+    pub fn in_<F>(self, f: F) -> Self
+    where
+        F: FnOnce(Self) -> Self,
+    {
+        self.write("IN").nested(f)
     }
 
     #[inline]

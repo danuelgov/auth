@@ -12,8 +12,7 @@ pub enum EventClientError {
 
 impl EventClient {
     #[inline]
-    pub async fn new() -> Self
-    {
+    pub async fn new() -> Self {
         let inner = aws_config::from_env().load().await;
         let inner = aws_sdk_sns::Client::new(&inner);
 

@@ -5,6 +5,7 @@ pub mod create_user_credential;
 pub mod create_user_credential_hasher;
 pub mod create_user_profile;
 pub mod find_before_signup;
+pub mod send_event;
 
 use complete_before_signup::*;
 use create_user::*;
@@ -13,6 +14,7 @@ use create_user_credential::*;
 use create_user_credential_hasher::*;
 use create_user_profile::*;
 use find_before_signup::*;
+use send_event::*;
 
 pub trait RepositoryContract:
     FindBeforeSignupContract
@@ -22,6 +24,7 @@ pub trait RepositoryContract:
     + CreateUserProfileContract
     + CreateUserAgreementContract
     + CompleteBeforeSignupContract
+    + SendEventContract
 {
     //
 }

@@ -6,6 +6,7 @@ members = [
   "crates/auth_authn_server",
   "crates/auth_console_server",
   "crates/auth_database",
+  "crates/auth_event",
   "crates/auth_internal",
   "crates/database_toolkit",
   "crates/guard",

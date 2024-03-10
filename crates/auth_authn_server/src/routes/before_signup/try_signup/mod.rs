@@ -2,6 +2,7 @@ mod repository;
 mod request;
 mod service;
 
+use auth_event::EventClient;
 use database_toolkit::DatabaseConnectionPool;
 use guard::IpAddrRateLimit;
 use repository::*;
@@ -13,9 +14,15 @@ use service::*;
 pub async fn handler(
     _rate_limit: IpAddrRateLimit,
     pool: &State<DatabaseConnectionPool>,
+    event_client: &State<EventClient>,
     body: Json<Data>,
 ) -> Result<Status, Status> {
-    let service = service(pool.inner().clone(), Repository, body);
+    let service = service(
+        pool.inner().clone(),
+        Repository,
+        event_client.inner().clone(),
+        body,
+    );
     match service.execute().await {
         Ok(_) => Ok(Status::NoContent),
         Err(ServiceError::EmailAddressAlreadyExists) => Err(Status::Conflict),
@@ -28,6 +35,7 @@ pub async fn handler(
 fn service(
     pool: DatabaseConnectionPool,
     repository: Repository,
+    event_client: EventClient,
     body: Json<Data>,
 ) -> Service<Repository> {
     let Data {
@@ -40,6 +48,7 @@ fn service(
     Service {
         pool,
         repository,
+        event_client,
         email_address,
         password,
         name,

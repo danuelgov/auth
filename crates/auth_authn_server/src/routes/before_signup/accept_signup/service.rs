@@ -6,6 +6,7 @@ use super::{
     create_user_credential_hasher::CreateUserCredentialHasherError,
     create_user_profile::CreateUserProfileError,
     find_before_signup::{BeforeSignupData, FindBeforeSignupError},
+    send_event::SendEventError,
     RepositoryContract,
 };
 use auth_database::{
@@ -14,6 +15,7 @@ use auth_database::{
     user_credential::columns::UserCredentialPrimaryKey,
     user_credential__has__hasher::columns::UserCredentialHasHasherPrimaryKey,
 };
+use auth_event::EventClient;
 use database_toolkit::DatabaseConnectionPool;
 use new_type::Handle;
 
@@ -24,6 +26,7 @@ pub trait ServiceContract {
 pub struct Service<Repository: RepositoryContract> {
     pub pool: DatabaseConnectionPool,
     pub repository: Repository,
+    pub event_client: EventClient,
     pub before_signup_id: BeforeSignupIdentity,
 }
 
@@ -37,6 +40,7 @@ pub enum ServiceError {
     CreateUserProfile(CreateUserProfileError),
     CreateUserAgreement(CreateUserAgreementError),
     CompleteBeforeSignup(CompleteBeforeSignupError),
+    SendEvent(SendEventError),
 }
 
 impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
@@ -75,7 +79,7 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
         let user_id = UserIdentity::new();
         let user_credential_pk = UserCredentialPrimaryKey::new();
         invoke!(create_user(&mut transaction, user_pk, user_id) else CreateUser);
-        invoke!(create_user_credential(&mut transaction, user_credential_pk, user_pk, email_address) else CreateUserCredential);
+        invoke!(create_user_credential(&mut transaction, user_credential_pk, user_pk, email_address.clone()) else CreateUserCredential);
 
         let user_credential__has__hasher_pk = UserCredentialHasHasherPrimaryKey::new();
         let expired_at = chrono::Utc::now() + chrono::Duration::days(90);
@@ -85,6 +89,8 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
         invoke!(create_user_profile(&mut transaction, user_pk, handle, name) else CreateUserProfile);
         invoke!(create_user_agreement(&mut transaction, user_pk, agreements) else CreateUserAgreement);
         invoke!(complete_before_signup(&mut transaction, before_signup_pk) else CompleteBeforeSignup);
+
+        invoke!(send_event(self.event_client.clone(), email_address, user_id) else SendEvent);
 
         transaction
             .commit()

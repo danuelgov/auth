@@ -1,11 +1,12 @@
 use super::{
     create_before_signup::CreateBeforeSignupError, exists_email_address::ExistsEmailAddressError,
-    exists_user_name::ExistsUserNameError, send_email::SendEmailError, RepositoryContract,
+    exists_user_name::ExistsUserNameError, send_event::SendEventError, RepositoryContract,
 };
 use auth_database::{
     agreement::columns::AgreementIdentity, hasher::columns::HasherPrimaryKey,
     user_profile::columns::UserProfileName,
 };
+use auth_event::EventClient;
 use database_toolkit::DatabaseConnectionPool;
 use new_type::{EmailAddress, Hasher, Password};
 
@@ -16,6 +17,7 @@ pub trait ServiceContract {
 pub struct Service<Repository: RepositoryContract> {
     pub pool: DatabaseConnectionPool,
     pub repository: Repository,
+    pub event_client: EventClient,
     pub email_address: EmailAddress,
     pub password: Password,
     pub name: UserProfileName,
@@ -30,7 +32,7 @@ pub enum ServiceError {
     InvalidAgreement,
     PasswordHash,
     CreateBeforeSignup(CreateBeforeSignupError),
-    SendEmail(SendEmailError),
+    SendEvent(SendEventError),
 }
 
 impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
@@ -99,9 +101,13 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
         };
 
         self.repository
-            .send_email(self.email_address.clone(), before_signup_id)
+            .send_event(
+                self.event_client.clone(),
+                self.email_address.clone(),
+                before_signup_id,
+            )
             .await
-            .map_err(ServiceError::SendEmail)?;
+            .map_err(ServiceError::SendEvent)?;
 
         Ok(())
     }

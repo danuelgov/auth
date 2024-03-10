@@ -1,12 +1,13 @@
 use super::{
     create_session::CreateSessionError, find_user_by_email_address::FindUserByEmailAddressError,
-    RepositoryContract,
+    send_event::SendEventError, RepositoryContract,
 };
 use crate::routes::session::login::find_user_by_email_address::FindUserByEmailAddressEntity;
 use auth_database::{
     hasher,
     user_session::columns::{UserSessionIdentity, UserSessionPrimaryKey},
 };
+use auth_event::EventClient;
 use database_toolkit::DatabaseConnectionPool;
 use new_type::{EmailAddress, Hasher, HasherError, IpAddr, Password};
 
@@ -21,6 +22,7 @@ pub struct Executed {
 pub struct Service<Repository: RepositoryContract> {
     pub pool: DatabaseConnectionPool,
     pub repository: Repository,
+    pub event_client: EventClient,
     pub email_address: EmailAddress,
     pub password: Password,
     pub ip_address: IpAddr,
@@ -33,6 +35,7 @@ pub enum ServiceError {
     Verify(HasherError),
     PasswordMismatch,
     CreateSession(CreateSessionError),
+    SendEvent(SendEventError),
 }
 
 impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
@@ -86,6 +89,15 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
                 .await
                 .map_err(ServiceError::CreateSession)?;
         }
+
+        self.repository
+            .send_event(
+                self.event_client.clone(),
+                user_pk,
+                self.email_address.clone(),
+            )
+            .await
+            .map_err(ServiceError::SendEvent)?;
 
         Ok(Executed {
             expired_password: expired_at.naive_utc() < now,

@@ -1,3 +1,7 @@
+pub mod signup_requested;
+
+pub use signup_requested::*;
+
 use crate::Topic;
 use serde::Serialize;
 

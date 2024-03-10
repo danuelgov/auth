@@ -1,4 +1,5 @@
 mod database;
+mod event_client;
 mod ip_addr_rate_limit;
 
 use rocket::{Build, Rocket};
@@ -22,6 +23,7 @@ pub async fn manage(rocket: Rocket<Build>) -> Result<Rocket<Build>, StateError> 
     let rocket = database::manage(rocket)
         .await
         .map_err(StateError::Database)?;
+    let rocket = event_client::manage(rocket).await;
     let rocket = ip_addr_rate_limit::manage(rocket).await;
 
     Ok(rocket)

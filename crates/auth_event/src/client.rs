@@ -1,15 +1,18 @@
 use crate::Event;
 
 #[derive(Debug, Clone)]
-pub struct Client {
+pub struct EventClient {
     inner: aws_sdk_sns::Client,
 }
 
-impl Client {
+#[derive(Debug)]
+pub enum EventClientError {
+    Aws(aws_sdk_sns::Error),
+}
+
+impl EventClient {
     #[inline]
-    pub async fn new<S>() -> Self
-    where
-        S: Into<String>,
+    pub async fn new() -> Self
     {
         let inner = aws_config::from_env().load().await;
         let inner = aws_sdk_sns::Client::new(&inner);
@@ -17,7 +20,7 @@ impl Client {
         Self { inner }
     }
 
-    pub async fn send<E>(&self, event: E) -> Result<(), aws_sdk_sns::Error>
+    pub async fn send<E>(&self, event: E) -> Result<(), EventClientError>
     where
         E: AsRef<Event>,
     {
@@ -27,7 +30,8 @@ impl Client {
             .topic_arn(event.topic_arn())
             .message(event.message())
             .send()
-            .await?;
+            .await
+            .map_err(|error| EventClientError::Aws(error.into()))?;
 
         Ok(())
     }

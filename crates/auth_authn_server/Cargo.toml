@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 auth_database = { path = "../auth_database" }
+auth_event = { path = "../auth_event" }
 auth_internal = { path = "../auth_internal" }
 chrono = { version = "0.4.33", features = ["now", "serde"] }
 database_toolkit = { path = "../database_toolkit" }

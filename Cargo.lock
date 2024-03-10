@@ -184,6 +184,7 @@ name = "auth_authn_server"
 version = "0.1.0"
 dependencies = [
  "auth_database",
+ "auth_event",
  "auth_internal",
  "chrono",
  "database_toolkit",
@@ -239,6 +240,7 @@ version = "0.1.0"
 dependencies = [
  "aws-config",
  "aws-sdk-sns",
+ "new_type",
  "serde",
  "serde_json",
 ]

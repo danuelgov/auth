@@ -1,8 +1,10 @@
 pub mod signup_requested;
 pub mod user_created;
+pub mod user_login_success;
 
 pub use signup_requested::*;
 pub use user_created::*;
+pub use user_login_success::*;
 
 use crate::Topic;
 use serde::Serialize;

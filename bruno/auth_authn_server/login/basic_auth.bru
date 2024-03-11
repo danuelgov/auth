@@ -1,0 +1,16 @@
+meta {
+  name: basic_auth
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{AUTHN_HOST}}/login
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: me@danuel.io
+  password: q1w2e3r4!@#$
+}

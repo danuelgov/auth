@@ -1,36 +1,42 @@
 mod repository;
-mod request;
 mod response;
 mod service;
 
 use auth_event::EventClient;
 use database_toolkit::DatabaseConnectionPool;
-use guard::IpAddrRateLimit;
-use new_type::IpAddr;
+use guard::{Authorization, Basic, Header, IpAddrRateLimit};
+use new_type::{EmailAddress, IpAddr, Password};
 use repository::*;
-use request::*;
 use response::*;
 use rocket::{http::Status, serde::json::Json, State};
 use service::*;
 
-#[post("/login", data = "<body>")]
+#[post("/login")]
 pub async fn handler(
     _rate_limit: IpAddrRateLimit,
     ip_addr: IpAddr,
     pool: &State<DatabaseConnectionPool>,
     event_client: &State<EventClient>,
-    body: Json<Data>,
+    authorization: Header<Authorization<Basic>>,
 ) -> Result<Response, Status> {
+    let Ok(email_address) = authorization.id().parse() else {
+        return Err(Status::Unauthorized);
+    };
+    let Ok(password) = authorization.password().parse() else {
+        return Err(Status::Unauthorized);
+    };
     let service = service(
         pool.inner().clone(),
         Repository,
         event_client.inner().clone(),
         ip_addr,
-        body,
+        email_address,
+        password,
     );
     match service.execute().await {
         Ok(response) => Ok(Response {
             body: Json(Body {
+                token: response.user_session_id.to_string(),
                 expired_password: response.expired_password,
             }),
         }),
@@ -45,13 +51,9 @@ fn service(
     repository: Repository,
     event_client: EventClient,
     ip_address: IpAddr,
-    body: Json<Data>,
+    email_address: EmailAddress,
+    password: Password,
 ) -> Service<Repository> {
-    let Data {
-        email_address,
-        password,
-    } = body.into_inner();
-
     Service {
         pool,
         repository,

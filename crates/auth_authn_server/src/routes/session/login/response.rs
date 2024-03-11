@@ -7,5 +7,6 @@ pub struct Response {
 
 #[derive(Serialize)]
 pub struct Body {
+    pub token: String,
     pub expired_password: bool,
 }

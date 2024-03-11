@@ -16,6 +16,7 @@ pub trait ServiceContract {
 }
 
 pub struct Executed {
+    pub user_session_id: UserSessionIdentity,
     pub expired_password: bool,
 }
 
@@ -73,9 +74,9 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
         }
 
         let now = chrono::Utc::now().naive_utc();
+        let user_session_id = UserSessionIdentity::new();
         {
             let user_session_pk = UserSessionPrimaryKey::new();
-            let user_session_id = UserSessionIdentity::new();
             let expired_at = now + chrono::Duration::days(30);
             self.repository
                 .create_session(
@@ -100,6 +101,7 @@ impl<Repository: RepositoryContract> ServiceContract for Service<Repository> {
             .map_err(ServiceError::SendEvent)?;
 
         Ok(Executed {
+            user_session_id,
             expired_password: expired_at.naive_utc() < now,
         })
     }

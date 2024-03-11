@@ -10,7 +10,7 @@ use request::*;
 use rocket::{http::Status, serde::json::Json, State};
 use service::*;
 
-#[post("/signup", data = "<body>")]
+#[post("/signup", data = "<body>", rank = 2)]
 pub async fn handler(
     _rate_limit: IpAddrRateLimit,
     pool: &State<DatabaseConnectionPool>,

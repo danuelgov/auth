@@ -1,28 +1,31 @@
 mod repository;
-mod request;
 mod service;
 
 use self::find_before_signup::FindBeforeSignupError;
+use auth_database::before_signup::columns::BeforeSignupIdentity;
 use auth_event::EventClient;
 use database_toolkit::DatabaseConnectionPool;
-use guard::IpAddrRateLimit;
+use guard::{Authorization, Bearer, Header, IpAddrRateLimit};
 use repository::*;
-use request::*;
-use rocket::{http::Status, serde::json::Json, State};
+use rocket::{http::Status, State};
 use service::*;
 
-#[post("/signup/accept", data = "<body>")]
+#[post("/signup", rank = 1)]
 pub async fn handler(
     _rate_limit: IpAddrRateLimit,
     pool: &State<DatabaseConnectionPool>,
     event_client: &State<EventClient>,
-    body: Json<Data>,
+    authorization: Header<Authorization<Bearer>>,
 ) -> Result<Status, Status> {
+    let before_signup_id = match authorization.value().as_str().parse() {
+        Ok(before_signup_id) => before_signup_id,
+        Err(_) => return Err(Status::Forbidden),
+    };
     let service = service(
         pool.inner().clone(),
         Repository,
         event_client.inner().clone(),
-        body,
+        before_signup_id,
     );
     match service.execute().await {
         Ok(_) => Ok(Status::NoContent),
@@ -38,10 +41,8 @@ fn service(
     pool: DatabaseConnectionPool,
     repository: Repository,
     event_client: EventClient,
-    body: Json<Data>,
+    before_signup_id: BeforeSignupIdentity,
 ) -> Service<Repository> {
-    let Data { before_signup_id } = body.into_inner();
-
     Service {
         pool,
         repository,

@@ -4,14 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-auth_database = { path = "../auth_database" }
-auth_internal = { path = "../auth_internal" }
+auth_database = { path = "../../crates/auth_database" }
+auth_internal = { path = "../../crates/auth_internal" }
 chrono = { version = "0.4.33", features = ["now", "serde"] }
-database_toolkit = { path = "../database_toolkit" }
+database_toolkit = { path = "../../crates/database_toolkit" }
 dotenvy = "0.15.7"
-guard = { path = "../guard" }
-identity = { path = "../identity" }
-new_type = { path = "../new_type" }
+guard = { path = "../../crates/guard" }
+identity = { path = "../../crates/identity" }
+new_type = { path = "../../crates/new_type" }
 reqwest = { version = "0.11.24", features = ["json"] }
 rocket = { version = "0.5.0", features = ["json"] }
 serde = { version = "1.0.196", features = ["derive"] }

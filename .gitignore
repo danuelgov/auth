@@ -2,3 +2,4 @@
 .env
 
 /target
+/bruno/node_modules

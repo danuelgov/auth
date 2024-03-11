@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 auth_database = { path = "../auth_database" }
+base64 = "0.22.0"
 chrono = "0.4.34"
 database_toolkit = { path = "../database_toolkit" }
 new_type = { path = "../new_type" }

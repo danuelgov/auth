@@ -1,8 +1,10 @@
 mod authorization;
+mod basic;
 mod bearer;
 mod credential;
 
 pub use authorization::*;
+pub use basic::*;
 pub use bearer::*;
 pub use credential::*;
 

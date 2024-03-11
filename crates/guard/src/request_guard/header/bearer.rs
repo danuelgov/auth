@@ -3,6 +3,11 @@ use crate::Credential;
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Bearer(String);
 
+#[derive(Debug)]
+pub enum BearerError {
+    InvalidType,
+}
+
 impl std::ops::Deref for Bearer {
     type Target = str;
 
@@ -20,13 +25,12 @@ impl AsRef<str> for Bearer {
 }
 
 impl std::str::FromStr for Bearer {
-    type Err = ();
+    type Err = BearerError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.starts_with("Bearer ") {
-            Ok(Bearer(s[7..].to_string()))
-        } else {
-            Err(())
+    fn from_str(source: &str) -> Result<Self, Self::Err> {
+        match source.strip_prefix("Bearer ") {
+            Some(source) => Ok(Bearer(source.to_string())),
+            None => Err(BearerError::InvalidType),
         }
     }
 }

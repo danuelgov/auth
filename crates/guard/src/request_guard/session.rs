@@ -85,7 +85,7 @@ impl<'r> FromRequest<'r> for Session {
     }
 }
 
-fn query<'q>(session_id: UserSessionIdentity) -> QueryBuilder<'q> {
+fn query<'q>(user_session_id: UserSessionIdentity) -> QueryBuilder<'q> {
     QueryBuilder::new()
         .select(UserSession, |builder| {
             builder.columns(&[
@@ -96,12 +96,12 @@ fn query<'q>(session_id: UserSessionIdentity) -> QueryBuilder<'q> {
         })
         .where_(|builder| {
             builder.condition(|builder| {
-                let session_id: Vec<u8> = session_id.into();
+                let user_session_id: Vec<u8> = user_session_id.into();
 
                 builder
                     .column(user_session::columns::ID)
                     .eq()
-                    .value(session_id)
+                    .value(user_session_id)
             })
         })
 }

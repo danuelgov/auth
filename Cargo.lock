@@ -250,6 +250,19 @@ name = "auth_internal"
 version = "0.1.0"
 
 [[package]]
+name = "auth_poster"
+version = "0.1.0"
+dependencies = [
+ "aws-config",
+ "aws-sdk-ses",
+ "aws-sdk-sqs",
+ "dotenvy",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -321,6 +334,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "aws-sdk-ses"
+version = "1.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41f1c24e8dcd3bcaf74592f3f4b18ead64ddb553eb87afdcb3be21d87ecf20a4"
+dependencies = [
+ "aws-credential-types",
+ "aws-runtime",
+ "aws-smithy-async",
+ "aws-smithy-http",
+ "aws-smithy-json",
+ "aws-smithy-query",
+ "aws-smithy-runtime",
+ "aws-smithy-runtime-api",
+ "aws-smithy-types",
+ "aws-smithy-xml",
+ "aws-types",
+ "http 0.2.11",
+ "once_cell",
+ "regex-lite",
+ "tracing",
+]
+
+[[package]]
 name = "aws-sdk-sns"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -337,6 +373,28 @@ dependencies = [
  "aws-smithy-types",
  "aws-smithy-xml",
  "aws-types",
+ "http 0.2.11",
+ "once_cell",
+ "regex-lite",
+ "tracing",
+]
+
+[[package]]
+name = "aws-sdk-sqs"
+version = "1.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5aef8bff2d0020c6423eeb529ca0af9463ea21f09a031929b3b2a6ad0058678"
+dependencies = [
+ "aws-credential-types",
+ "aws-runtime",
+ "aws-smithy-async",
+ "aws-smithy-http",
+ "aws-smithy-json",
+ "aws-smithy-runtime",
+ "aws-smithy-runtime-api",
+ "aws-smithy-types",
+ "aws-types",
+ "bytes",
  "http 0.2.11",
  "once_cell",
  "regex-lite",
@@ -2972,6 +3030,7 @@ dependencies = [
  "libc",
  "mio",
  "num_cpus",
+ "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
  "socket2",

@@ -1,5 +1,7 @@
 .DS_Store
 .env
 
-/target
-/bruno/node_modules
+target/
+bruno/node_modules/
+
+generated/

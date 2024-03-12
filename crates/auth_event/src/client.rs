@@ -1,8 +1,9 @@
 use crate::Event;
+use aws_sdk_sns::Client;
 
 #[derive(Debug, Clone)]
 pub struct EventClient {
-    inner: aws_sdk_sns::Client,
+    inner: Client,
 }
 
 #[derive(Debug)]
@@ -14,7 +15,7 @@ impl EventClient {
     #[inline]
     pub async fn new() -> Self {
         let inner = aws_config::from_env().load().await;
-        let inner = aws_sdk_sns::Client::new(&inner);
+        let inner = Client::new(&inner);
 
         Self { inner }
     }

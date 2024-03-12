@@ -5,6 +5,7 @@ members = [
   "apps/auth_api_server",
   "apps/auth_authn_server",
   "apps/auth_console_server",
+  "apps/auth_poster",
   "crates/auth_database",
   "crates/auth_event",
   "crates/auth_internal",

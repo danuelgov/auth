@@ -1,0 +1,21 @@
+{
+  "name": "@danuelgov/email-templates",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "email build --dir=src",
+    "dev": "email dev --dir=src",
+    "preexport": "rimraf out",
+    "export": "email export --dir=src --pretty"
+  },
+  "dependencies": {
+    "@react-email/components": "0.0.15",
+    "react": "18.2.0",
+    "react-email": "2.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "18.2.33",
+    "@types/react-dom": "18.2.14",
+    "rimraf": "^5.0.5"
+  }
+}

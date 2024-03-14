@@ -257,6 +257,7 @@ dependencies = [
  "aws-sdk-ses",
  "aws-sdk-sqs",
  "dotenvy",
+ "email_template",
  "serde",
  "serde_json",
  "tokio",
@@ -991,6 +992,10 @@ checksum = "e2153bd83ebc09db15bcbdc3e2194d901804952e3dc96967e1cd3b0c5c32d112"
 dependencies = [
  "serde",
 ]
+
+[[package]]
+name = "email_template"
+version = "0.1.0"
 
 [[package]]
 name = "encode_unicode"

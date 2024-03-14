@@ -10,6 +10,7 @@ members = [
   "crates/auth_event",
   "crates/auth_internal",
   "crates/database_toolkit",
+  "crates/email_template",
   "crates/guard",
   "crates/identity",
   "crates/new_type",

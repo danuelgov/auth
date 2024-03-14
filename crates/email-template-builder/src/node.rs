@@ -1,6 +1,16 @@
 pub mod attribute;
+pub mod charset;
+pub mod dir;
+pub mod http_equiv;
+pub mod lang;
+pub mod target;
 
 pub use attribute::*;
+pub use charset::*;
+pub use dir::*;
+pub use http_equiv::*;
+pub use lang::*;
+pub use target::*;
 
 use crate::Style;
 

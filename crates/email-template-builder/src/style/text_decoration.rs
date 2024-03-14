@@ -1,7 +1,8 @@
 use crate::{IntoStyle, StyleAttribute};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum TextDecoration {
+    #[default]
     None,
     Underline,
     Overline,

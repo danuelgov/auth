@@ -1,7 +1,8 @@
 use crate::{IntoStyle, StyleAttribute};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub enum MaxWidth {
+    #[default]
     Auto,
     Zero,
     Pixel(u32),

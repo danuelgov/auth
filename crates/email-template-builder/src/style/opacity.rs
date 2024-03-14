@@ -1,7 +1,8 @@
 use crate::{IntoStyle, StyleAttribute};
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub enum Opacity {
+    #[default]
     Zero,
     Specific(f32),
 }

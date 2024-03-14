@@ -1,7 +1,7 @@
 use crate::{
-    element_node, style, text_node, void_element_node, Color, Display, ElementNode, FontFamily,
-    FontSize, IntoNode, LineHeight, Margin, MaxHeight, MaxWidth, Opacity, Overflow, TextDecoration,
-    VoidElementNode,
+    element_node, style, text_node, void_element_node, Charset, Color, Dir, Display, ElementNode,
+    FontSize, HttpEquiv, IntoNode, Lang, LineHeight, Margin, MaxHeight, MaxWidth, Opacity,
+    Overflow, Target, TextDecoration, VoidElementNode, DEFAULT_FONT_FAMILY,
 };
 
 #[inline]
@@ -17,8 +17,8 @@ where
     Children: IntoNode,
 {
     element_node("html")
-        .attribute(("dir", "ltr"))
-        .attribute(("lang", "en"))
+        .attribute(Dir::Ltr)
+        .attribute(Lang::Korean)
         .children(children)
 }
 
@@ -26,8 +26,8 @@ where
 pub fn head() -> ElementNode {
     element_node("head").children(
         meta()
-            .attribute(("charset", "UTF-8"))
-            .attribute(("http-equiv", "X-UA-Compatible")),
+            .attribute(Charset::Utf8)
+            .attribute(HttpEquiv::XUaCompatible),
     )
 }
 
@@ -85,9 +85,7 @@ pub fn text() -> ElementNode {
             .attach(FontSize::Pixel(14))
             .attach(LineHeight::Pixel(24))
             .attach(Margin::Vertical(16))
-            .attach(FontFamily(
-                r#""Google Sans",Roboto,RobotoDraft,Helvetica,Arial,sans-serif"#,
-            )),
+            .attach(DEFAULT_FONT_FAMILY),
     )
 }
 
@@ -103,6 +101,6 @@ pub fn link(to: &str) -> ElementNode {
             .attach(Color::Hex(0x067df7))
             .attach(TextDecoration::Underline),
     )
-    .attribute(("target", "_blank"))
+    .attribute(Target::Blank)
     .attribute(("href", to))
 }

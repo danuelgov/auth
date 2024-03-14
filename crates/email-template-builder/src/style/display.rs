@@ -1,9 +1,10 @@
 use crate::{IntoStyle, StyleAttribute};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum Display {
     None,
     Inline,
+    #[default]
     Block,
     InlineBlock,
 }

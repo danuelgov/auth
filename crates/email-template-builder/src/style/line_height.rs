@@ -1,7 +1,8 @@
 use crate::{IntoStyle, StyleAttribute};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub enum LineHeight {
+    #[default]
     Auto,
     Normal,
     Pixel(u32),

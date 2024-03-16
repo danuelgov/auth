@@ -17,13 +17,12 @@ pub enum EmailClientError {
 }
 
 pub struct EmailPayload {
-    pub to_addresses: Vec<String>,
     pub from_address: &'static str,
+    pub to_addresses: Vec<String>,
     pub cc_addresses: Vec<String>,
     pub bcc_addresses: Vec<String>,
     pub subject: String,
-    pub body_html: String,
-    pub body_text: String,
+    pub body: String,
 }
 
 impl EmailClient {
@@ -37,6 +36,7 @@ impl EmailClient {
     pub async fn send(&self, payload: EmailPayload) -> Result<(), EmailClientError> {
         self.inner
             .send_email()
+            .return_path(payload.from_address)
             .destination(payload.destination())
             .message(payload.message()?)
             .send()
@@ -46,6 +46,7 @@ impl EmailClient {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub async fn send_template(
         &self,
         template_name: &str,
@@ -53,9 +54,10 @@ impl EmailClient {
     ) -> Result<(), EmailClientError> {
         self.inner
             .send_templated_email()
+            .return_path(payload.from_address)
             .destination(payload.destination())
             .template(template_name)
-            .template_data(&payload.body_html)
+            .template_data(&payload.body)
             .send()
             .await
             .map_err(|error| EmailClientError::Aws(error.into()))?;
@@ -90,9 +92,8 @@ impl EmailPayload {
         }
 
         let subject = content!(Subject(subject))?;
-        let html = content!(HtmlBody(body_html))?;
-        let text = content!(TextBody(body_text))?;
-        let body = Body::builder().html(html).text(text).build();
+        let html = content!(HtmlBody(body))?;
+        let body = Body::builder().html(html).build();
         let message = Message::builder().subject(subject).body(body).build();
 
         Ok(message)

@@ -95,12 +95,12 @@ pub fn a() -> ElementNode {
 }
 
 #[inline]
-pub fn link(to: &str) -> ElementNode {
+pub fn link(to: impl Into<String>) -> ElementNode {
     a().style(
         style()
             .attach(Color::Hex(0x067df7))
             .attach(TextDecoration::Underline),
     )
     .attribute(Target::Blank)
-    .attribute(("href", to))
+    .attribute(("href", to.into()))
 }

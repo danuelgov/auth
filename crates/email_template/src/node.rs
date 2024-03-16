@@ -224,16 +224,23 @@ impl IntoNode for String {
 
 impl FragmentNode {
     #[inline]
-    pub fn children<Node>(mut self, node: Node) -> Self
-    where
-        Node: IntoNode,
-    {
+    pub fn render(&self) -> String {
+        self.to_string()
+    }
+
+    #[inline]
+    pub fn children(mut self, node: impl IntoNode) -> Self {
         self.children.push(node.into_node());
         self
     }
 }
 
 impl VoidElementNode {
+    #[inline]
+    pub fn render(&self) -> String {
+        self.to_string()
+    }
+
     #[inline]
     pub fn attributes(mut self, attributes: Attributes) -> Self {
         self.attributes = self.attributes.merge(attributes);
@@ -260,6 +267,11 @@ impl VoidElementNode {
 
 impl ElementNode {
     #[inline]
+    pub fn render(&self) -> String {
+        self.to_string()
+    }
+
+    #[inline]
     pub fn attributes(mut self, attributes: Attributes) -> Self {
         self.attributes = self.attributes.merge(attributes);
         self
@@ -283,12 +295,16 @@ impl ElementNode {
     }
 
     #[inline]
-    pub fn children<Node>(mut self, node: Node) -> Self
-    where
-        Node: IntoNode,
-    {
+    pub fn children(mut self, node: impl IntoNode) -> Self {
         self.children = self.children.children(node);
         self
+    }
+}
+
+impl TextNode {
+    #[inline]
+    pub fn render(&self) -> String {
+        self.to_string()
     }
 }
 
@@ -304,6 +320,13 @@ impl Attributes {
     pub fn merge(mut self, attributes: Self) -> Self {
         self.values.extend(attributes.values);
         self
+    }
+}
+
+#[inline]
+pub fn fragment_node() -> FragmentNode {
+    FragmentNode {
+        children: Default::default(),
     }
 }
 
@@ -331,4 +354,9 @@ pub fn text_node(value: impl Into<String>) -> TextNode {
     TextNode {
         value: value.into(),
     }
+}
+
+#[inline]
+pub fn render(node: impl IntoNode) -> String {
+    node.into_node().to_string()
 }

@@ -13,7 +13,6 @@ pub enum EmailClientError {
     Aws(aws_sdk_ses::Error),
     Subject(aws_sdk_ses::error::BuildError),
     HtmlBody(aws_sdk_ses::error::BuildError),
-    TextBody(aws_sdk_ses::error::BuildError),
 }
 
 pub struct EmailPayload {

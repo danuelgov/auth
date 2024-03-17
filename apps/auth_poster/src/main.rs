@@ -1,49 +1,53 @@
+#![allow(clippy::all)]
+
 #[macro_use]
 extern crate serde;
 
 mod email;
 mod event;
-mod generated;
-mod poster;
 
+use aws_lambda_events::sqs::{BatchItemFailure, SqsBatchResponse, SqsEvent};
 use email::*;
 use event::*;
-use generated::*;
-use poster::*;
-
-#[derive(Debug)]
-pub enum Error {
-    Json(serde_json::Error),
-    Event(EventError),
-}
+use lambda_runtime::{run, service_fn, LambdaEvent};
+use tokio::task::JoinSet;
 
 #[tokio::main]
-async fn main() {
-    let poster_client = PosterClient::new(QUEUE_URL).await;
+async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let email_client = EmailClient::new().await;
-
-    loop {
-        let Ok(messages) = poster_client.receive().await else {
-            continue;
-        };
-
-        for message in messages {
-            if let Some(body) = message.body {
-                if let Err(error) = post(&email_client, &body).await {
-                    dbg!(error);
-                    continue;
-                }
-            }
-            if let Some(receipt_handle) = message.receipt_handle {
-                let _ = poster_client.commit(&receipt_handle).await;
-            }
-        }
-    }
-}
-
-async fn post(email_client: &EmailClient, body: &str) -> Result<(), Error> {
-    let event: Event = serde_json::from_str(&body).map_err(Error::Json)?;
-    event.execute(email_client).await.map_err(Error::Event)?;
+    run(service_fn(|event| handler(&email_client, event))).await?;
 
     Ok(())
+}
+
+async fn handler(
+    email_client: &EmailClient,
+    event: LambdaEvent<SqsEvent>,
+) -> Result<SqsBatchResponse, Box<dyn std::error::Error>> {
+    let mut tasks = JoinSet::new();
+    for record in event.payload.records {
+        let (Some(message_id), Some(body)) = (record.message_id, record.body) else {
+            continue;
+        };
+        let email_client = email_client.clone();
+        tasks.spawn(async move {
+            if let Ok(event) = serde_json::from_str(&body) {
+                if execute(event, &email_client).await.is_err() {
+                    return Err(message_id);
+                }
+            };
+            Ok(())
+        });
+    }
+
+    let mut batch_item_failures = vec![];
+    while let Some(executed) = tasks.join_next().await {
+        if let Ok(Err(item_identifier)) = executed {
+            batch_item_failures.push(BatchItemFailure { item_identifier });
+        }
+    }
+
+    Ok(SqsBatchResponse {
+        batch_item_failures,
+    })
 }

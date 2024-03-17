@@ -28,11 +28,10 @@ pub enum EventError {
     UserLoginSuccess(UserLoginSuccessEventError),
 }
 
-impl Event {
-    pub async fn execute(&self, email_client: &EmailClient) -> Result<(), EventError> {
-        macro_rules! execute {
+pub async fn execute(event: Event, email_client: &EmailClient) -> Result<(), EventError> {
+    macro_rules! execute {
             ($($variant:ident -> $error:ident,)+) => {
-                match self {
+                match event {
                     $(
                         Event::$variant(event) => {
                             event
@@ -47,10 +46,9 @@ impl Event {
             };
         }
 
-        execute! {
-            SignupRequest -> SignupRequestedEventError,
-            UserCreated -> UserCreatedEventError,
-            UserLoginSuccess -> UserLoginSuccessEventError,
-        }
+    execute! {
+        SignupRequest -> SignupRequestedEventError,
+        UserCreated -> UserCreatedEventError,
+        UserLoginSuccess -> UserLoginSuccessEventError,
     }
 }
